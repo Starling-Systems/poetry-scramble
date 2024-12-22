@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Poetry Scramble</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        background-color: #f4f4f9;
+      }
+      h1 {
+        color: #333;
+      }
+      textarea {
+        width: 80%;
+        height: 150px;
+        margin-bottom: 20px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+      button {
+        padding: 10px 20px;
+        font-size: 16px;
+        color: white;
+        background-color: #007bff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      .output {
+        margin-top: 20px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #fff;
+        width: 80%;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Poetry Scramble</h1>
+    <textarea id="poetryInput" placeholder="Enter your poem here..."></textarea>
+    <button onclick="scramblePoem()">Scramble</button>
+    <div id="output" class="output"></div>
+
+    <script>
+      function scramblePoem() {
+        const input = document.getElementById("poetryInput").value;
+        if (!input.trim()) {
+          document.getElementById("output").textContent =
+            "Please enter some text to scramble.";
+          return;
+        }
+
+        const words = input.split(/\s+/);
+        for (let i = words.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [words[i], words[j]] = [words[j], words[i]];
+        }
+
+        document.getElementById("output").textContent = words.join(" ");
+      }
+    </script>
+  </body>
+</html>
