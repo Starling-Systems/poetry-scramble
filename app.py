@@ -50,7 +50,7 @@ def get_random_poem():
         if not poems:
             return jsonify({"error": "No poems found for the selected author."}), 500
 
-        poems = [p for p in poems if p.linecount < 15]
+        poems = [p for p in poems if p["linecount"] < 15]
 
         # Step 4: Choose a random poem
         random_poem = random.choice(poems)
