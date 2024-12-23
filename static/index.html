@@ -22,32 +22,43 @@
       .poem-display {
         margin: 20px 0;
         padding: 10px;
-        border: 1px solid #ccc;
+        border: 2px solid black;
         border-radius: 5px;
         background-color: #fff;
         width: 80%;
-        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
       }
-      button {
-        padding: 10px 20px;
-        font-size: 16px;
-        color: white;
-        background-color: #007bff;
-        border: none;
+      .line-box {
+        padding: 10px;
+        margin: 5px;
+        border: 1px solid #ccc;
         border-radius: 5px;
-        cursor: pointer;
+        background-color: #e8e8e8;
+        width: 100%;
+        text-align: center;
+        cursor: grab;
       }
-      button:hover {
-        background-color: #0056b3;
+      .line-box.dragging {
+        opacity: 0.5;
+      }
+      .line-box.over {
+        border: 2px dashed #007bff;
+      }
+      .poem-display.correct {
+        border-color: green;
       }
     </style>
   </head>
   <body>
     <h1>Poetry Scramble</h1>
     <div id="poemDisplay" class="poem-display">Loading poem...</div>
-    <button onclick="scramblePoem()">Scramble</button>
 
     <script>
+      let originalOrder = [];
+      let shuffledOrder = [];
+
       async function loadRandomPoem() {
         try {
           const randomId = Math.floor(Math.random() * 67) + 1; // Random ID between 1 and 67
@@ -71,22 +82,91 @@
           return;
         }
         const start = Math.floor(Math.random() * (lines.length - 3)); // Ensure at least 4 lines are available
-        const randomLines = lines.slice(start, start + 4);
-        document.getElementById("poemDisplay").innerHTML = `
+        originalOrder = lines.slice(start, start + 4);
+        shuffledOrder = [...originalOrder];
+
+        // Shuffle the lines
+        for (let i = shuffledOrder.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledOrder[i], shuffledOrder[j]] = [
+            shuffledOrder[j],
+            shuffledOrder[i],
+          ];
+        }
+
+        const poemDisplay = document.getElementById("poemDisplay");
+        poemDisplay.innerHTML = `
                 <h2>${poem.title}</h2>
                 <h3>by ${poem.author}</h3>
-                <p>${randomLines.join("<br>")}</p>
             `;
+
+        shuffledOrder.forEach((line, index) => {
+          const lineBox = document.createElement("div");
+          lineBox.classList.add("line-box");
+          lineBox.draggable = true;
+          lineBox.textContent = line;
+          lineBox.dataset.index = index;
+          addDragAndDropListeners(lineBox);
+          poemDisplay.appendChild(lineBox);
+        });
       }
 
-      function scramblePoem() {
-        const display = document.getElementById("poemDisplay");
-        const lines = display.querySelector("p").textContent.split("\n");
-        for (let i = lines.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [lines[i], lines[j]] = [lines[j], lines[i]];
+      function addDragAndDropListeners(element) {
+        element.addEventListener("dragstart", (e) => {
+          e.target.classList.add("dragging");
+          e.dataTransfer.setData("text/plain", e.target.dataset.index);
+        });
+
+        element.addEventListener("dragend", (e) => {
+          e.target.classList.remove("dragging");
+        });
+
+        element.addEventListener("dragover", (e) => {
+          e.preventDefault();
+          const dragging = document.querySelector(".dragging");
+          if (dragging && e.target.classList.contains("line-box")) {
+            e.target.classList.add("over");
+          }
+        });
+
+        element.addEventListener("dragleave", (e) => {
+          e.target.classList.remove("over");
+        });
+
+        element.addEventListener("drop", (e) => {
+          e.preventDefault();
+          e.target.classList.remove("over");
+
+          const draggingIndex = e.dataTransfer.getData("text/plain");
+          const targetIndex = e.target.dataset.index;
+
+          // Swap the lines in the shuffled order
+          [shuffledOrder[draggingIndex], shuffledOrder[targetIndex]] = [
+            shuffledOrder[targetIndex],
+            shuffledOrder[draggingIndex],
+          ];
+
+          updateDisplay();
+          checkCorrectOrder();
+        });
+      }
+
+      function updateDisplay() {
+        const poemDisplay = document.getElementById("poemDisplay");
+        const lineBoxes = Array.from(poemDisplay.querySelectorAll(".line-box"));
+        lineBoxes.forEach((box, index) => {
+          box.textContent = shuffledOrder[index];
+          box.dataset.index = index;
+        });
+      }
+
+      function checkCorrectOrder() {
+        const poemDisplay = document.getElementById("poemDisplay");
+        if (JSON.stringify(originalOrder) === JSON.stringify(shuffledOrder)) {
+          poemDisplay.classList.add("correct");
+        } else {
+          poemDisplay.classList.remove("correct");
         }
-        display.querySelector("p").innerHTML = lines.join("<br>");
       }
 
       window.onload = loadRandomPoem;
