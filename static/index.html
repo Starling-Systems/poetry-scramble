@@ -158,15 +158,20 @@
       function addDragAndDropListeners(element) {
         element.addEventListener("dragstart", (e) => {
           e.target.classList.add("dragging");
+          e.dataTransfer.effectAllowed = "move";
           e.dataTransfer.setData("text/plain", e.target.dataset.index);
         });
 
         element.addEventListener("dragend", (e) => {
           e.target.classList.remove("dragging");
+          document
+            .querySelectorAll(".line-box.over")
+            .forEach((el) => el.classList.remove("over"));
         });
 
         element.addEventListener("dragover", (e) => {
           e.preventDefault();
+          e.dataTransfer.dropEffect = "move";
           const dragging = document.querySelector(".dragging");
           if (dragging && e.target.classList.contains("line-box")) {
             e.target.classList.add("over");
@@ -179,10 +184,10 @@
 
         element.addEventListener("drop", (e) => {
           e.preventDefault();
-          e.target.classList.remove("over");
-
           const draggingIndex = e.dataTransfer.getData("text/plain");
           const targetIndex = e.target.dataset.index;
+
+          if (draggingIndex === targetIndex) return;
 
           // Swap the lines in the shuffled order
           [shuffledOrder[draggingIndex], shuffledOrder[targetIndex]] = [
