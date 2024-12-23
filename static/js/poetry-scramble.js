@@ -46,6 +46,7 @@ function displayNextLines() {
 
   originalOrder = allLines.slice(currentIndex, currentIndex + linesPerRound);
   shuffledOrder = [...originalOrder];
+  movesLeft = 6; // Reset moves for the new chunk
 
   for (let i = shuffledOrder.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -76,7 +77,6 @@ function skipToNextVerse() {
     orderedLines.push(originalOrder);
   }
   currentIndex += linesPerRound;
-  movesLeft = 6;
   displayNextLines();
 }
 
@@ -193,8 +193,11 @@ function checkCorrectOrder() {
       displayNextLines();
     }, 1000);
   } else if (movesLeft <= 0) {
-    alert("Out of moves! Moving to the next verse.");
-    skipToNextVerse();
+    poemDisplay.classList.add("out-of-moves");
+    setTimeout(() => {
+      poemDisplay.classList.remove("out-of-moves");
+      skipToNextVerse();
+    }, 1000);
   }
   updateProgressBar();
 }
