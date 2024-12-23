@@ -157,6 +157,7 @@
         element.addEventListener("dragstart", (e) => {
           e.target.classList.add("dragging");
           e.dataTransfer.setData("text/plain", e.target.dataset.index);
+          console.log("Drag started:", e.target.dataset.index);
         });
 
         element.addEventListener("dragend", (e) => {
@@ -164,12 +165,17 @@
           document
             .querySelectorAll(".line-box.over")
             .forEach((el) => el.classList.remove("over"));
+          console.log("Drag ended");
         });
 
         element.addEventListener("dragover", (e) => {
           e.preventDefault();
           const dragging = document.querySelector(".dragging");
-          if (dragging && e.target.classList.contains("line-box")) {
+          if (
+            dragging &&
+            e.target.classList.contains("line-box") &&
+            e.target !== dragging
+          ) {
             e.target.classList.add("over");
           }
         });
@@ -180,14 +186,18 @@
 
         element.addEventListener("drop", (e) => {
           e.preventDefault();
-          const draggingIndex = parseInt(e.dataTransfer.getData("text/plain"));
+          const dragging = document.querySelector(".dragging");
+          const draggingIndex = parseInt(dragging.dataset.index);
           const targetIndex = parseInt(e.target.dataset.index);
 
-          [shuffledOrder[draggingIndex], shuffledOrder[targetIndex]] = [
-            shuffledOrder[targetIndex],
-            shuffledOrder[draggingIndex],
-          ];
+          if (draggingIndex !== targetIndex) {
+            [shuffledOrder[draggingIndex], shuffledOrder[targetIndex]] = [
+              shuffledOrder[targetIndex],
+              shuffledOrder[draggingIndex],
+            ];
+          }
 
+          console.log("Dropped:", draggingIndex, "on", targetIndex);
           updateDisplay();
           checkCorrectOrder();
         });
