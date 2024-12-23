@@ -1,4 +1,3 @@
-// Filtering out blank lines in the JavaScript logic
 function filterBlankLines(lines) {
   return lines.filter((line) => line.trim() !== "");
 }
@@ -8,6 +7,8 @@ let shuffledOrder = [];
 let allLines = [];
 let orderedLines = [];
 let currentIndex = 0;
+let movesLeft = 6;
+let points = 0;
 const linesPerRound = 3;
 let touchStartIndex = null;
 
@@ -22,6 +23,8 @@ async function loadRandomPoem() {
     allLines = filterBlankLines(poem.lines);
     orderedLines = [];
     currentIndex = 0;
+    movesLeft = 6;
+    points = 0;
     displayNextLines();
     updateProgressBar();
   } catch (error) {
@@ -73,11 +76,11 @@ function skipToNextVerse() {
     orderedLines.push(originalOrder);
   }
   currentIndex += linesPerRound;
+  movesLeft = 6;
   displayNextLines();
 }
 
 function addDragAndDropListeners(element) {
-  // For desktop drag-and-drop
   element.addEventListener("dragstart", (e) => {
     e.target.classList.add("dragging");
     e.dataTransfer.setData("text/plain", e.target.dataset.index);
@@ -125,11 +128,11 @@ function addDragAndDropListeners(element) {
       shuffledOrder.splice(targetIndex, 0, draggedLine);
     }
 
+    movesLeft--;
     updateDisplay();
     checkCorrectOrder();
   });
 
-  // For mobile touch events
   element.addEventListener("touchstart", (e) => {
     touchStartIndex = parseInt(e.target.dataset.index);
     e.target.classList.add("dragging");
@@ -175,22 +178,25 @@ function checkCorrectOrder() {
   const poemDisplay = document.getElementById("poemDisplay");
   if (JSON.stringify(originalOrder) === JSON.stringify(shuffledOrder)) {
     poemDisplay.classList.add("correct");
+    points++;
     orderedLines.push(originalOrder);
     currentIndex += linesPerRound;
     setTimeout(() => {
       poemDisplay.classList.remove("correct");
       displayNextLines();
     }, 1000);
-  } else {
-    poemDisplay.classList.remove("correct");
+  } else if (movesLeft <= 0) {
+    alert("Out of moves! Moving to the next verse.");
+    skipToNextVerse();
   }
+  updateProgressBar();
 }
 
 function updateProgressBar() {
   const progressBar = document.getElementById("progressBar");
   const completed = orderedLines.length;
   const total = Math.ceil(allLines.length / linesPerRound);
-  progressBar.textContent = `Chunks Ordered: ${completed}/${total}`;
+  progressBar.textContent = `Chunks Ordered: ${completed}/${total} | Points: ${points} | Moves Left: ${movesLeft}`;
 }
 
 window.onload = loadRandomPoem;

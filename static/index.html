@@ -30,7 +30,7 @@
         flex-direction: column;
         align-items: center;
         transition: border 0.3s ease-in-out;
-        user-select: none; /* Disable text selection */
+        user-select: none;
       }
       .line-box {
         padding: 15px;
@@ -79,6 +79,10 @@
         text-align: center;
         color: #333;
       }
+      .score {
+        font-size: 16px;
+        margin-bottom: 10px;
+      }
       .next-verse {
         margin-top: 20px;
         padding: 10px 20px;
@@ -105,10 +109,11 @@
   <body>
     <h1>Poetry Scramble</h1>
     <div class="instructions">
-      Drag and drop the lines to reorder them. The border will turn green and
-      flash when the lines are in the correct order.
+      Drag and drop the lines to reorder them. You have 6 moves to get it right!
     </div>
-    <div class="progress-bar" id="progressBar">Chunks Ordered: 0/0</div>
+    <div class="progress-bar" id="progressBar">
+      Chunks Ordered: 0/0 | Points: 0
+    </div>
     <div id="poemDisplay" class="poem-display">Loading poem...</div>
     <button class="next-verse" onclick="skipToNextVerse()">Next Verse</button>
     <div id="orderedLines" class="ordered-lines">
