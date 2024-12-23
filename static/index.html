@@ -39,6 +39,7 @@
         width: 100%;
         text-align: center;
         cursor: grab;
+        touch-action: none; /* Prevent scrolling during drag */
       }
       .line-box.dragging {
         opacity: 0.5;
@@ -148,6 +149,50 @@
 
           updateDisplay();
           checkCorrectOrder();
+        });
+
+        // For touch events (mobile drag support)
+        element.addEventListener("touchstart", (e) => {
+          e.target.classList.add("dragging");
+          const touchIndex = e.target.dataset.index;
+          e.target.dataset.touchStartIndex = touchIndex;
+        });
+
+        element.addEventListener("touchmove", (e) => {
+          e.preventDefault(); // Prevent scrolling
+          const touch = e.touches[0];
+          const target = document.elementFromPoint(
+            touch.clientX,
+            touch.clientY
+          );
+          const dragging = document.querySelector(".dragging");
+          if (
+            dragging &&
+            target &&
+            target.classList.contains("line-box") &&
+            target !== dragging
+          ) {
+            target.classList.add("over");
+          }
+        });
+
+        element.addEventListener("touchend", (e) => {
+          e.target.classList.remove("dragging");
+          const touchEndIndex = e.target.dataset.touchStartIndex;
+          const overElement = document.querySelector(".line-box.over");
+          if (overElement) {
+            const targetIndex = overElement.dataset.index;
+            overElement.classList.remove("over");
+
+            // Swap the lines in the shuffled order
+            [shuffledOrder[touchEndIndex], shuffledOrder[targetIndex]] = [
+              shuffledOrder[targetIndex],
+              shuffledOrder[touchEndIndex],
+            ];
+
+            updateDisplay();
+            checkCorrectOrder();
+          }
         });
       }
 
