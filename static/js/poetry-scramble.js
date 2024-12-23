@@ -38,8 +38,15 @@ function displayNextLines() {
   const orderedLinesDisplay = document.getElementById("orderedLines");
 
   if (currentIndex >= allLines.length) {
+    // Ensure the final chunk is displayed if it's not already
+    if (originalOrder.length > 0 && !orderedLines.includes(originalOrder)) {
+      orderedLines.push(originalOrder);
+    }
     poemDisplay.innerHTML =
       "<h2>Congratulations! You've completed the poem!</h2>";
+    orderedLinesDisplay.innerHTML = orderedLines
+      .map((chunk) => `<div class="chunk">${chunk.join("<br>")}</div>`)
+      .join("");
     updateProgressBar();
     return;
   }
