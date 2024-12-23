@@ -157,7 +157,7 @@
         element.addEventListener("dragstart", (e) => {
           e.target.classList.add("dragging");
           e.dataTransfer.setData("text/plain", e.target.dataset.index);
-          console.log("Drag started:", e.target.dataset.index);
+          e.dataTransfer.effectAllowed = "move";
         });
 
         element.addEventListener("dragend", (e) => {
@@ -165,11 +165,11 @@
           document
             .querySelectorAll(".line-box.over")
             .forEach((el) => el.classList.remove("over"));
-          console.log("Drag ended");
         });
 
         element.addEventListener("dragover", (e) => {
           e.preventDefault();
+          e.dataTransfer.dropEffect = "move";
           const dragging = document.querySelector(".dragging");
           if (
             dragging &&
@@ -187,17 +187,22 @@
         element.addEventListener("drop", (e) => {
           e.preventDefault();
           const dragging = document.querySelector(".dragging");
+          if (!dragging) return;
+
           const draggingIndex = parseInt(dragging.dataset.index);
           const targetIndex = parseInt(e.target.dataset.index);
 
-          if (draggingIndex !== targetIndex) {
+          if (
+            !isNaN(draggingIndex) &&
+            !isNaN(targetIndex) &&
+            draggingIndex !== targetIndex
+          ) {
             [shuffledOrder[draggingIndex], shuffledOrder[targetIndex]] = [
               shuffledOrder[targetIndex],
               shuffledOrder[draggingIndex],
             ];
           }
 
-          console.log("Dropped:", draggingIndex, "on", targetIndex);
           updateDisplay();
           checkCorrectOrder();
         });
