@@ -30,14 +30,14 @@ async function loadRandomPoem() {
     points = 0;
     displayNextLines();
     updateProgressBar();
-    updatePoemDetails();
+    updatePoemDetails(currentPoem);
   } catch (error) {
     document.getElementById("poemDisplay").textContent =
       "Error loading poem: " + error.message;
   }
 }
 
-function updatePoemDetails() {
+function updatePoemDetails(currentPoem) {
   const poemDetails = document.getElementById("poemDetails");
   poemDetails.innerHTML = `<h3>${currentPoem.title} by ${currentPoem.author}</h3>`;
 }
