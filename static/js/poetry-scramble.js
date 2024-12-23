@@ -55,12 +55,15 @@ function displayNextLines() {
     poemDisplay.appendChild(lineBox);
   });
 
-  orderedLinesDisplay.innerHTML = `<h3>Ordered lines:</h3><p>${orderedLines.join(
-    "<br>"
-  )}</p>`;
+  orderedLinesDisplay.innerHTML = orderedLines
+    .map((chunk) => `<div class="chunk">${chunk.join("<br>")}</div>`)
+    .join("");
 }
 
 function skipToNextVerse() {
+  if (originalOrder.length > 0) {
+    orderedLines.push(originalOrder);
+  }
   currentIndex += linesPerRound;
   displayNextLines();
 }
@@ -164,7 +167,7 @@ function checkCorrectOrder() {
   const poemDisplay = document.getElementById("poemDisplay");
   if (JSON.stringify(originalOrder) === JSON.stringify(shuffledOrder)) {
     poemDisplay.classList.add("correct");
-    orderedLines = orderedLines.concat(originalOrder);
+    orderedLines.push(originalOrder);
     currentIndex += linesPerRound;
     setTimeout(() => {
       poemDisplay.classList.remove("correct");
