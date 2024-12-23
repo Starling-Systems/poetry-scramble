@@ -19,13 +19,14 @@
       h1 {
         color: #333;
       }
-      textarea {
-        width: 80%;
-        height: 150px;
-        margin-bottom: 20px;
+      .poem-display {
+        margin: 20px 0;
         padding: 10px;
         border: 1px solid #ccc;
         border-radius: 5px;
+        background-color: #fff;
+        width: 80%;
+        text-align: center;
       }
       button {
         padding: 10px 20px;
@@ -39,39 +40,56 @@
       button:hover {
         background-color: #0056b3;
       }
-      .output {
-        margin-top: 20px;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        background-color: #fff;
-        width: 80%;
-      }
     </style>
   </head>
   <body>
     <h1>Poetry Scramble</h1>
-    <textarea id="poetryInput" placeholder="Enter your poem here..."></textarea>
+    <div id="poemDisplay" class="poem-display">Loading poem...</div>
     <button onclick="scramblePoem()">Scramble</button>
-    <div id="output" class="output"></div>
 
     <script>
-      function scramblePoem() {
-        const input = document.getElementById("poetryInput").value;
-        if (!input.trim()) {
-          document.getElementById("output").textContent =
-            "Please enter some text to scramble.";
+      async function loadRandomPoem() {
+        try {
+          const randomId = Math.floor(Math.random() * 67) + 1; // Random ID between 1 and 67
+          const response = await fetch(`/poem/${randomId}`);
+          if (!response.ok) {
+            throw new Error("Failed to load poem");
+          }
+          const poem = await response.json();
+          displayRandomLines(poem);
+        } catch (error) {
+          document.getElementById("poemDisplay").textContent =
+            "Error loading poem: " + error.message;
+        }
+      }
+
+      function displayRandomLines(poem) {
+        const lines = poem.lines;
+        if (lines.length < 4) {
+          document.getElementById("poemDisplay").textContent =
+            "Poem has less than 4 lines.";
           return;
         }
-
-        const words = input.split(/\s+/);
-        for (let i = words.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [words[i], words[j]] = [words[j], words[i]];
-        }
-
-        document.getElementById("output").textContent = words.join(" ");
+        const start = Math.floor(Math.random() * (lines.length - 3)); // Ensure at least 4 lines are available
+        const randomLines = lines.slice(start, start + 4);
+        document.getElementById("poemDisplay").innerHTML = `
+                <h2>${poem.title}</h2>
+                <h3>by ${poem.author}</h3>
+                <p>${randomLines.join("<br>")}</p>
+            `;
       }
+
+      function scramblePoem() {
+        const display = document.getElementById("poemDisplay");
+        const lines = display.querySelector("p").textContent.split("\n");
+        for (let i = lines.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [lines[i], lines[j]] = [lines[j], lines[i]];
+        }
+        display.querySelector("p").innerHTML = lines.join("<br>");
+      }
+
+      window.onload = loadRandomPoem;
     </script>
   </body>
 </html>
