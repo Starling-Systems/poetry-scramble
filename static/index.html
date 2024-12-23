@@ -53,6 +53,13 @@
         border-width: 6px;
         animation: flash-border 0.5s alternate infinite;
       }
+      .ordered-lines {
+        margin-top: 20px;
+        padding: 10px;
+        border: 2px solid #ddd;
+        background-color: #f9f9f9;
+        width: 80%;
+      }
       .instructions {
         margin-top: 20px;
         padding: 10px;
@@ -73,6 +80,9 @@
   <body>
     <h1>Poetry Scramble</h1>
     <div id="poemDisplay" class="poem-display">Loading poem...</div>
+    <div id="orderedLines" class="ordered-lines">
+      Ordered lines will appear here.
+    </div>
     <div class="instructions">
       Drag and drop the lines to reorder them. The border will turn green and
       flash when the lines are in the correct order.
@@ -81,6 +91,10 @@
     <script>
       let originalOrder = [];
       let shuffledOrder = [];
+      let allLines = [];
+      let orderedLines = [];
+      let currentIndex = 0;
+      const linesPerRound = 4;
 
       async function loadRandomPoem() {
         try {
@@ -90,22 +104,30 @@
             throw new Error("Failed to load poem");
           }
           const poem = await response.json();
-          displayRandomLines(poem);
+          allLines = poem.lines;
+          orderedLines = [];
+          currentIndex = 0;
+          displayNextLines();
         } catch (error) {
           document.getElementById("poemDisplay").textContent =
             "Error loading poem: " + error.message;
         }
       }
 
-      function displayRandomLines(poem) {
-        const lines = poem.lines;
-        if (lines.length < 4) {
-          document.getElementById("poemDisplay").textContent =
-            "Poem has less than 4 lines.";
+      function displayNextLines() {
+        const poemDisplay = document.getElementById("poemDisplay");
+        const orderedLinesDisplay = document.getElementById("orderedLines");
+
+        if (currentIndex >= allLines.length) {
+          poemDisplay.innerHTML =
+            "<h2>Congratulations! You've completed the poem!</h2>";
           return;
         }
-        const start = Math.floor(Math.random() * (lines.length - 3)); // Ensure at least 4 lines are available
-        originalOrder = lines.slice(start, start + 4);
+
+        originalOrder = allLines.slice(
+          currentIndex,
+          currentIndex + linesPerRound
+        );
         shuffledOrder = [...originalOrder];
 
         // Shuffle the lines
@@ -117,12 +139,7 @@
           ];
         }
 
-        const poemDisplay = document.getElementById("poemDisplay");
-        poemDisplay.innerHTML = `
-                <h2>${poem.title}</h2>
-                <h3>by ${poem.author}</h3>
-            `;
-
+        poemDisplay.innerHTML = `<h2>Reorder these lines:</h2>`;
         shuffledOrder.forEach((line, index) => {
           const lineBox = document.createElement("div");
           lineBox.classList.add("line-box");
@@ -132,6 +149,10 @@
           addDragAndDropListeners(lineBox);
           poemDisplay.appendChild(lineBox);
         });
+
+        orderedLinesDisplay.innerHTML = `<h3>Ordered lines:</h3><p>${orderedLines.join(
+          "<br>"
+        )}</p>`;
       }
 
       function addDragAndDropListeners(element) {
@@ -172,50 +193,6 @@
           updateDisplay();
           checkCorrectOrder();
         });
-
-        // For touch events (mobile drag support)
-        element.addEventListener("touchstart", (e) => {
-          e.target.classList.add("dragging");
-          const touchIndex = e.target.dataset.index;
-          e.target.dataset.touchStartIndex = touchIndex;
-        });
-
-        element.addEventListener("touchmove", (e) => {
-          e.preventDefault(); // Prevent scrolling
-          const touch = e.touches[0];
-          const target = document.elementFromPoint(
-            touch.clientX,
-            touch.clientY
-          );
-          const dragging = document.querySelector(".dragging");
-          if (
-            dragging &&
-            target &&
-            target.classList.contains("line-box") &&
-            target !== dragging
-          ) {
-            target.classList.add("over");
-          }
-        });
-
-        element.addEventListener("touchend", (e) => {
-          e.target.classList.remove("dragging");
-          const touchEndIndex = e.target.dataset.touchStartIndex;
-          const overElement = document.querySelector(".line-box.over");
-          if (overElement) {
-            const targetIndex = overElement.dataset.index;
-            overElement.classList.remove("over");
-
-            // Swap the lines in the shuffled order
-            [shuffledOrder[touchEndIndex], shuffledOrder[targetIndex]] = [
-              shuffledOrder[targetIndex],
-              shuffledOrder[touchEndIndex],
-            ];
-
-            updateDisplay();
-            checkCorrectOrder();
-          }
-        });
       }
 
       function updateDisplay() {
@@ -231,6 +208,12 @@
         const poemDisplay = document.getElementById("poemDisplay");
         if (JSON.stringify(originalOrder) === JSON.stringify(shuffledOrder)) {
           poemDisplay.classList.add("correct");
+          orderedLines = orderedLines.concat(originalOrder);
+          currentIndex += linesPerRound;
+          setTimeout(() => {
+            poemDisplay.classList.remove("correct");
+            displayNextLines();
+          }, 1000);
         } else {
           poemDisplay.classList.remove("correct");
         }
