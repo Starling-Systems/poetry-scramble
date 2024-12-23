@@ -15,7 +15,10 @@ let touchStartIndex = null;
 
 async function loadRandomPoem() {
   try {
+    debugger;
     const response = await fetch("/random");
+    console.log("/random response:");
+    console.log(response);
     if (!response.ok) {
       throw new Error("Failed to load poem");
     }
