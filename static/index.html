@@ -13,7 +13,7 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        height: 100vh;
+        min-height: 100vh;
         background-color: #f4f4f9;
       }
       h1 {
@@ -29,7 +29,7 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        transition: border 0.3s ease-in-out; /* For smoother flashing */
+        transition: border 0.3s ease-in-out;
       }
       .line-box {
         padding: 15px;
@@ -40,7 +40,6 @@
         width: calc(100% - 40px);
         text-align: center;
         cursor: grab;
-        touch-action: none; /* Prevent scrolling during drag */
       }
       .line-box.dragging {
         opacity: 0.5;
@@ -98,7 +97,7 @@
 
       async function loadRandomPoem() {
         try {
-          const randomId = Math.floor(Math.random() * 67) + 1; // Random ID between 1 and 67
+          const randomId = Math.floor(Math.random() * 67) + 1;
           const response = await fetch(`/poem/${randomId}`);
           if (!response.ok) {
             throw new Error("Failed to load poem");
@@ -130,7 +129,6 @@
         );
         shuffledOrder = [...originalOrder];
 
-        // Shuffle the lines
         for (let i = shuffledOrder.length - 1; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1));
           [shuffledOrder[i], shuffledOrder[j]] = [
@@ -158,7 +156,6 @@
       function addDragAndDropListeners(element) {
         element.addEventListener("dragstart", (e) => {
           e.target.classList.add("dragging");
-          e.dataTransfer.effectAllowed = "move";
           e.dataTransfer.setData("text/plain", e.target.dataset.index);
         });
 
@@ -171,7 +168,6 @@
 
         element.addEventListener("dragover", (e) => {
           e.preventDefault();
-          e.dataTransfer.dropEffect = "move";
           const dragging = document.querySelector(".dragging");
           if (dragging && e.target.classList.contains("line-box")) {
             e.target.classList.add("over");
@@ -184,12 +180,9 @@
 
         element.addEventListener("drop", (e) => {
           e.preventDefault();
-          const draggingIndex = e.dataTransfer.getData("text/plain");
-          const targetIndex = e.target.dataset.index;
+          const draggingIndex = parseInt(e.dataTransfer.getData("text/plain"));
+          const targetIndex = parseInt(e.target.dataset.index);
 
-          if (draggingIndex === targetIndex) return;
-
-          // Swap the lines in the shuffled order
           [shuffledOrder[draggingIndex], shuffledOrder[targetIndex]] = [
             shuffledOrder[targetIndex],
             shuffledOrder[draggingIndex],
