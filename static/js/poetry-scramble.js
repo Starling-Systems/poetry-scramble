@@ -14,8 +14,7 @@ let touchStartIndex = null;
 
 async function loadRandomPoem() {
   try {
-    const randomId = Math.floor(Math.random() * 67) + 1;
-    const response = await fetch(`/poem/${randomId}`);
+    const response = await fetch("/random");
     if (!response.ok) {
       throw new Error("Failed to load poem");
     }

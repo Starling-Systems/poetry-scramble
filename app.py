@@ -1,6 +1,8 @@
 from flask import Flask, jsonify, request, send_from_directory
 import os
 import json
+import random
+import requests
 
 app = Flask(__name__, static_folder='static')
 
@@ -25,6 +27,40 @@ def get_poem(poem_id):
         }), 200
     else:
         return jsonify({"error": "Poem not found"}), 404
+
+@app.route('/random', methods=['GET'])
+def get_random_poem():
+    try:
+        # Step 1: Get authors from PoetryDB
+        authors_response = requests.get('https://poetrydb.org/author')
+        authors_response.raise_for_status()
+        authors = authors_response.json().get('authors', [])
+
+        if not authors:
+            return jsonify({"error": "No authors found."}), 500
+
+        # Step 2: Choose a random author
+        random_author = random.choice(authors)
+
+        # Step 3: Get poems by the chosen author
+        poems_response = requests.get(f'https://poetrydb.org/author/{random_author}')
+        poems_response.raise_for_status()
+        poems = poems_response.json()
+
+        if not poems:
+            return jsonify({"error": "No poems found for the selected author."}), 500
+
+        # Step 4: Choose a random poem
+        random_poem = random.choice(poems)
+
+        return jsonify({
+            "title": random_poem.get("title"),
+            "author": random_poem.get("author"),
+            "lines": random_poem.get("lines", [])
+        })
+
+    except requests.exceptions.RequestException as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))  # Use PORT from environment or default to 5000
