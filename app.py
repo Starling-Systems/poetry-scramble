@@ -1,14 +1,12 @@
 from flask import Flask, jsonify, request, send_from_directory
 import os
+import json
 
 app = Flask(__name__, static_folder='static')
 
-# Mock data for demonstration
-poems = {
-    1: "The road not taken, by Robert Frost",
-    2: "Still I Rise, by Maya Angelou",
-    3: "If, by Rudyard Kipling"
-}
+# Load poems from witman.json
+with open('witman.json', 'r') as file:
+    poems = json.load(file)
 
 @app.route('/')
 def home():
@@ -16,9 +14,15 @@ def home():
 
 @app.route('/poem/<int:poem_id>', methods=['GET'])
 def get_poem(poem_id):
-    poem = poems.get(poem_id)
-    if poem:
-        return jsonify({"poem_id": poem_id, "poem": poem}), 200
+    if 1 <= poem_id <= 67:
+        poem = poems[poem_id - 1]  # Adjusting for 0-based indexing in the array
+        return jsonify({
+            "poem_id": poem_id,
+            "title": poem.get("title"),
+            "author": poem.get("author"),
+            "lines": poem.get("lines"),
+            "linecount": poem.get("linecount")
+        }), 200
     else:
         return jsonify({"error": "Poem not found"}), 404
 
