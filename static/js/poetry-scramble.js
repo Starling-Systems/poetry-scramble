@@ -3,7 +3,7 @@ let shuffledOrder = [];
 let allLines = [];
 let orderedLines = [];
 let currentIndex = 0;
-const linesPerRound = 4;
+const linesPerRound = 3;
 let touchStartIndex = null;
 
 async function loadRandomPoem() {
@@ -18,6 +18,7 @@ async function loadRandomPoem() {
     orderedLines = [];
     currentIndex = 0;
     displayNextLines();
+    updateProgressBar();
   } catch (error) {
     document.getElementById("poemDisplay").textContent =
       "Error loading poem: " + error.message;
@@ -31,6 +32,7 @@ function displayNextLines() {
   if (currentIndex >= allLines.length) {
     poemDisplay.innerHTML =
       "<h2>Congratulations! You've completed the poem!</h2>";
+    updateProgressBar();
     return;
   }
 
@@ -58,6 +60,7 @@ function displayNextLines() {
   orderedLinesDisplay.innerHTML = orderedLines
     .map((chunk) => `<div class="chunk">${chunk.join("<br>")}</div>`)
     .join("");
+  updateProgressBar();
 }
 
 function skipToNextVerse() {
@@ -176,6 +179,13 @@ function checkCorrectOrder() {
   } else {
     poemDisplay.classList.remove("correct");
   }
+}
+
+function updateProgressBar() {
+  const progressBar = document.getElementById("progressBar");
+  const completed = orderedLines.length;
+  const total = Math.ceil(allLines.length / linesPerRound);
+  progressBar.textContent = `Chunks Ordered: ${completed}/${total}`;
 }
 
 window.onload = loadRandomPoem;
