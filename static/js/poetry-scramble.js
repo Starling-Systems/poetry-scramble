@@ -9,6 +9,7 @@ let orderedLines = [];
 let currentIndex = 0;
 let movesLeft = 6;
 let points = 0;
+let currentPoem = {};
 const linesPerRound = 3;
 let touchStartIndex = null;
 
@@ -18,18 +19,24 @@ async function loadRandomPoem() {
     if (!response.ok) {
       throw new Error("Failed to load poem");
     }
-    const poem = await response.json();
-    allLines = filterBlankLines(poem.lines);
+    currentPoem = await response.json();
+    allLines = filterBlankLines(currentPoem.lines);
     orderedLines = [];
     currentIndex = 0;
     movesLeft = 6;
     points = 0;
     displayNextLines();
     updateProgressBar();
+    updatePoemDetails();
   } catch (error) {
     document.getElementById("poemDisplay").textContent =
       "Error loading poem: " + error.message;
   }
+}
+
+function updatePoemDetails() {
+  const poemDetails = document.getElementById("poemDetails");
+  poemDetails.innerHTML = `<h3>${currentPoem.title} by ${currentPoem.author}</h3>`;
 }
 
 function displayNextLines() {
@@ -37,7 +44,6 @@ function displayNextLines() {
   const orderedLinesDisplay = document.getElementById("orderedLines");
 
   if (currentIndex >= allLines.length) {
-    // Ensure the final chunk is displayed if it's not already
     if (originalOrder.length > 0 && !orderedLines.includes(originalOrder)) {
       orderedLines.push(originalOrder);
     }
@@ -52,7 +58,7 @@ function displayNextLines() {
 
   originalOrder = allLines.slice(currentIndex, currentIndex + linesPerRound);
   shuffledOrder = [...originalOrder];
-  movesLeft = 6; // Reset moves for the new chunk
+  movesLeft = 6;
 
   for (let i = shuffledOrder.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -133,7 +139,6 @@ function addDragAndDropListeners(element) {
       const draggedLine = shuffledOrder.splice(draggingIndex, 1)[0];
       shuffledOrder.splice(targetIndex, 0, draggedLine);
 
-      // Decrease moves left after a successful drop
       movesLeft--;
       updateProgressBar();
     }
@@ -164,7 +169,6 @@ function addDragAndDropListeners(element) {
         const draggedLine = shuffledOrder.splice(touchStartIndex, 1)[0];
         shuffledOrder.splice(targetIndex, 0, draggedLine);
 
-        // Decrease moves left after a successful touch drop
         movesLeft--;
         updateProgressBar();
       }
