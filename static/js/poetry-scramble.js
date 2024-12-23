@@ -1,3 +1,8 @@
+// Filtering out blank lines in the JavaScript logic
+function filterBlankLines(lines) {
+  return lines.filter((line) => line.trim() !== "");
+}
+
 let originalOrder = [];
 let shuffledOrder = [];
 let allLines = [];
@@ -14,7 +19,7 @@ async function loadRandomPoem() {
       throw new Error("Failed to load poem");
     }
     const poem = await response.json();
-    allLines = poem.lines;
+    allLines = filterBlankLines(poem.lines);
     orderedLines = [];
     currentIndex = 0;
     displayNextLines();
