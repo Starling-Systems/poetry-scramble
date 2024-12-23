@@ -126,9 +126,12 @@ function addDragAndDropListeners(element) {
     ) {
       const draggedLine = shuffledOrder.splice(draggingIndex, 1)[0];
       shuffledOrder.splice(targetIndex, 0, draggedLine);
+
+      // Decrease moves left after a successful drop
+      movesLeft--;
+      updateProgressBar();
     }
 
-    movesLeft--;
     updateDisplay();
     checkCorrectOrder();
   });
@@ -154,6 +157,10 @@ function addDragAndDropListeners(element) {
       ) {
         const draggedLine = shuffledOrder.splice(touchStartIndex, 1)[0];
         shuffledOrder.splice(targetIndex, 0, draggedLine);
+
+        // Decrease moves left after a successful touch drop
+        movesLeft--;
+        updateProgressBar();
       }
     }
 
