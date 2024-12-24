@@ -28,6 +28,25 @@ def get_poem(poem_id):
     else:
         return jsonify({"error": "Poem not found"}), 404
 
+@app.route('/random_sonnet', methods=['GET'])
+def get_random_sonnet():
+    try:
+        sonnets_response = requests.get("https://ajpj.fact50.net/PoetryScramble/ShakespeareSonnets.json")
+        sonnets_response.raise_for_status()
+        sonnets = sonnets_response.json()
+        if not sonnets:
+            return jsonify({"error": "No sonnets found."}), 500
+        random_sonnet = random.choice(sonnets)
+        return jsonify({
+            "title": random_sonnet.get("title"),
+            "author": random_sonnet.get("author"),
+            "lines": random_sonnet.get("lines", [])
+        })
+    except requests.exceptions.RequestException as e:
+        return jsonify({"error": str(e)}), 500
+
+
+
 @app.route('/random', methods=['GET'])
 def get_random_poem():
     try:
