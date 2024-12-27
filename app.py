@@ -7,10 +7,6 @@ import poetry
 
 app = Flask(__name__, static_folder='static')
 
-# Load poems from witman.json
-with open('witman.json', 'r') as file:
-    poems = json.load(file)
-
 @app.route('/')
 def home():
     return send_from_directory(app.static_folder, 'index.html')
