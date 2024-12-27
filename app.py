@@ -3,6 +3,7 @@ import os
 import json
 import random
 import requests
+import poetry
 
 app = Flask(__name__, static_folder='static')
 
@@ -44,6 +45,14 @@ def get_random_sonnet():
         })
     except requests.exceptions.RequestException as e:
         return jsonify({"error": str(e)}), 500
+
+
+@app.route("/sonnet_deworded", methods = ["GET"])
+def get_deworded_sonnet():
+    sonnetJSON = get_random_sonnet()
+    sonnetJSON["lines"] = [poetry.get_last_word(line) for line in sonnetJSON["lines"]]
+    return jsonify(sonnetJSON)
+    
 
 
 
