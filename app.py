@@ -33,9 +33,7 @@ def get_poem(poem_id):
 @app.route('/random_sonnet', methods=['GET'])
 def get_random_sonnet():
     try:
-        sonnets_response = requests.get("https://ajpj.fact50.net/PoetryScramble/ShakespeareSonnets.json")
-        sonnets_response.raise_for_status()
-        sonnets = sonnets_response.json()
+        sonnets = jsonify(get_random_sonnet_json())
         if not sonnets:
             return jsonify({"error": "No sonnets found."}), 500
         random_sonnet = random.choice(sonnets)

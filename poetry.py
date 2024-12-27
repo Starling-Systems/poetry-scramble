@@ -1,3 +1,9 @@
+def get_random_sonnet_json():
+    sonnets_response = requests.get("https://ajpj.fact50.net/PoetryScramble/ShakespeareSonnets.json")
+    sonnets_response.raise_for_status()
+    sonnets = sonnets_response.json()
+    return sonnets
+
 def get_last_word(l: str) -> list :
     """returns deworded string and the missing word"""
     words = l.split(" ")
