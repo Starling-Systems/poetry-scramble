@@ -33,7 +33,7 @@ def get_poem(poem_id):
 @app.route('/random_sonnet', methods=['GET'])
 def get_random_sonnet():
     try:
-        sonnets = jsonify(get_random_sonnet_json())
+        sonnets = jsonify(poetry.get_random_sonnet_json())
         if not sonnets:
             return jsonify({"error": "No sonnets found."}), 500
         random_sonnet = random.choice(sonnets)
