@@ -15,6 +15,11 @@ with open('witman.json', 'r') as file:
 def home():
     return send_from_directory(app.static_folder, 'index.html')
 
+@app.route('/sonnet')
+def sonnet():
+    return send_from_directory(app.static_folder, 'sonnet.html')
+
+
 @app.route('/poem/<int:poem_id>', methods=['GET'])
 def get_poem(poem_id):
     if 1 <= poem_id <= 67:
