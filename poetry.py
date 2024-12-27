@@ -1,3 +1,6 @@
+import requests
+import string
+
 def get_random_sonnet_json():
     sonnets_response = requests.get("https://ajpj.fact50.net/PoetryScramble/ShakespeareSonnets.json")
     sonnets_response.raise_for_status()
