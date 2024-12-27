@@ -6,7 +6,7 @@ def get_random_sonnet_json():
     sonnets_response = requests.get("https://ajpj.fact50.net/PoetryScramble/ShakespeareSonnets.json")
     sonnets_response.raise_for_status()
     sonnets = sonnets_response.json()
-    sonnet = random.choice(sonnets)[0]
+    sonnet = random.choice(sonnets)
     return sonnet
 
 def get_last_word(l: str) -> list :
