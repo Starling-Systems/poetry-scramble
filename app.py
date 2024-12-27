@@ -33,15 +33,11 @@ def get_poem(poem_id):
 @app.route('/random_sonnet', methods=['GET'])
 def get_random_sonnet():
     try:
-        sonnets = jsonify(poetry.get_random_sonnet_json())
+        sonnets = poetry.get_random_sonnet_json()
         if not sonnets:
             return jsonify({"error": "No sonnets found."}), 500
-        random_sonnet = random.choice(sonnets)
-        return jsonify({
-            "title": random_sonnet.get("title"),
-            "author": random_sonnet.get("author"),
-            "lines": random_sonnet.get("lines", [])
-        })
+        else:
+            return sonnets, 200
     except requests.exceptions.RequestException as e:
         return jsonify({"error": str(e)}), 500
 
@@ -51,9 +47,6 @@ def get_deworded_sonnet():
     sonnetJSON = get_random_sonnet()
     sonnetJSON["lines"] = [poetry.get_last_word(line) for line in sonnetJSON["lines"]]
     return jsonify(sonnetJSON)
-    
-
-
 
 @app.route('/random', methods=['GET'])
 def get_random_poem():
