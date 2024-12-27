@@ -44,7 +44,7 @@ def get_random_sonnet():
 
 @app.route("/sonnet_deworded", methods = ["GET"])
 def get_deworded_sonnet():
-    sonnetJSON = get_random_sonnet()
+    sonnetJSON = poetry.get_random_sonnet_json()
     sonnetJSON["lines"] = [poetry.get_last_word(line) for line in sonnetJSON["lines"]]
     return jsonify(sonnetJSON)
 
