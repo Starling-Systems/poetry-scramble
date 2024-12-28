@@ -29,7 +29,7 @@ function displaySonnet(currentPoem) {
   const poemDisplay = document.getElementById("poemDisplay");
   let sonnet = currentPoem.lines;
   let sonnetText = `<h2>Complete the rhymes:</h2>`;
-  sonnet.each((line) => (sonnetText += line));
+  sonnet.forEach((line) => (sonnetText += line));
   poemDisplay.innerHTML = sonnetText;
 }
 
