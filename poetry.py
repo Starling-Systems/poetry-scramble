@@ -3,6 +3,7 @@ import string
 import random
 
 def get_random_sonnet_json():
+    """returns a random sonnet in json format"""
     sonnets_response = requests.get("https://ajpj.fact50.net/PoetryScramble/ShakespeareSonnets.json")
     sonnets_response.raise_for_status()
     sonnets = sonnets_response.json()
