@@ -10,7 +10,7 @@ let currentIndex = 0;
 let movesLeft = 12;
 let points = 0;
 let currentPoem = {};
-const linesPerRound = 14;
+const linesPerRound = 5;
 let touchStartIndex = null;
 
 async function loadRandomPoem() {
