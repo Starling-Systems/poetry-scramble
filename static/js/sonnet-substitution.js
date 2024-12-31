@@ -17,7 +17,7 @@ let currentIndex = 0;
 let movesLeft = 12;
 let points = 0;
 let currentPoem = {};
-const linesPerRound = 5;
+const linesPerRound = 14;
 let touchStartIndex = null;
 
 async function loadRandomPoem() {
@@ -34,7 +34,7 @@ async function loadRandomPoem() {
     orderedLastWords = currentPoem.map(l => l[1]);
     shuffledLastWords = shuffleArray(orderedLastWords);
     currentIndex = 0;
-    movesLeft = 20;
+    movesLeft = 12;
     points = 0;
     displayNextLines();
     updateProgressBar();
