@@ -70,7 +70,7 @@ function displayNextLines() {
     shuffledOrder[j] = temp;
   }
 
-  poemDisplay.innerHTML = `<h2>Reorder these lines:</h2>`;
+  poemDisplay.innerHTML = ``;
   shuffledOrder.forEach((line, index) => {
     const lineBox = document.createElement("div");
     lineBox.classList.add("line-box");
