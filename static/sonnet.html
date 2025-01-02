@@ -1,26 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Poetry Scramble</title>
-    <link rel="stylesheet" href="/static/poetry.css">
-  </head>
-  <body>
-    <h1>Sonnet shuffle</h1>
-    <div id="poemDetails"></div>
-    <div class="progress-bar" id="progressBar">
-      Chunks Ordered: 0/0 | Points: 0
-    </div>
-    <div id="poemDisplay" class="poem-display">Loading poem...</div>
-    <div class="instructions">
-      Choose the missing words to complete the sonnet
-    </div>
-    <button class="next-verse" onclick="skipToNextVerse()">Next Verse</button>
-    <div id="orderedLines" class="ordered-lines">
-      Ordered lines will appear here.
-    </div>
-    <!-- <script src="static/js/poetry-scramble.js"></script> -->
-    <script src="static/js/sonnet-shuffle.js"></script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Poetry Scramble</title>
+  <link rel="stylesheet" href="/static/poetry.css">
+</head>
+
+<body>
+  <h1>Sonnet shuffle</h1>
+  <div id="poemDetails"></div>
+  <div class="progress-bar" id="progressBar">
+    Chunks Ordered: 0/0 | Points: 0
+  </div>
+  <div id="poemDisplay" class="poem-display">Loading poem...</div>
+  <div class="instructions">
+    Drag and drop the lines to put them in order.
+  </div>
+  <button class="next-verse" onclick="skipToNextVerse()">Next Verse</button>
+  <div id="orderedLines" class="ordered-lines">
+    Ordered lines will appear here.
+  </div>
+  <script src="static/js/sonnet-shuffle.js"></script>
+</body>
+
 </html>
