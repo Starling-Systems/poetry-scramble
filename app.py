@@ -16,7 +16,7 @@ def sonnet():
     return send_from_directory(app.static_folder, 'sonnet.html')
 
 @app.route('/sonnet-substitution')
-def sonnet():
+def sonnet_substitution():
     return send_from_directory(app.static_folder, 'sonnet-substitution.html')
 
 
