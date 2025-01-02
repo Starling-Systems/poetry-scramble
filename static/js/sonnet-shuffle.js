@@ -61,7 +61,7 @@ function displayNextLines() {
 
   originalOrder = allLines.slice(currentIndex, currentIndex + linesPerRound);
   shuffledOrder = [...originalOrder];
-  movesLeft = 12;
+  movesLeft = 4;
 
   for (let i = shuffledOrder.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
