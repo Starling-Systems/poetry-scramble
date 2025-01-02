@@ -20,6 +20,51 @@ let currentPoem = {};
 const linesPerRound = 14;
 let touchStartIndex = null;
 
+function displayPoem() {
+  const poemDisplay = document.getElementById("poemDisplay");
+
+  if (currentIndex >= allLines.length) {
+    if (originalOrder.length > 0 && !orderedLines.includes(originalOrder)) {
+      orderedLines.push(originalOrder);
+    }
+    poemDisplay.innerHTML =
+      "<h2>Congratulations! You've completed the poem!</h2>";
+    orderedLinesDisplay.innerHTML = orderedLines
+      .map((chunk) => `<div class="chunk">${chunk.join("<br>")}</div>`)
+      .join("");
+    updateProgressBar();
+    return;
+  }
+
+  originalOrder = allLines.slice(currentIndex, currentIndex + linesPerRound);
+  shuffledOrder = [...originalOrder];
+  movesLeft = 6;
+
+  for (let i = shuffledOrder.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const temp = shuffledOrder[i];
+    shuffledOrder[i] = shuffledOrder[j];
+    shuffledOrder[j] = temp;
+  }
+
+// this should be applied to the wordBag
+  poemDisplay.innerHTML = ``;
+  shuffledOrder.forEach((line, index) => {
+    const lineBox = document.createElement("div");
+    lineBox.classList.add("line-box");
+    lineBox.draggable = true;
+    lineBox.textContent = line;
+    lineBox.dataset.index = index;
+    addDragAndDropListeners(lineBox);
+    poemDisplay.appendChild(lineBox);
+  });
+
+  orderedLinesDisplay.innerHTML = orderedLines
+    .map((chunk) => `<div class="chunk">${chunk.join("<br>")}</div>`)
+    .join("");
+  updateProgressBar();
+}
+
 async function loadRandomPoem() {
   try {
     debugger;
@@ -36,7 +81,7 @@ async function loadRandomPoem() {
     currentIndex = 0;
     movesLeft = 12;
     points = 0;
-    displayNextLines();
+    displaPoem();
     updateProgressBar();
     updatePoemDetails(currentPoem);
   } catch (error) {
@@ -158,7 +203,7 @@ function checkCorrectOrder() {
     currentIndex += linesPerRound;
     setTimeout(() => {
       poemDisplay.classList.remove("correct");
-      displayNextLines();
+      displayPoem();
     }, 1000);
   } else if (movesLeft <= 0) {
     poemDisplay.classList.add("out-of-moves");
