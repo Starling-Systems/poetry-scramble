@@ -29,9 +29,6 @@ function displayPoem() {
     }
     poemDisplay.innerHTML =
       "<h2>Congratulations! You've completed the poem!</h2>";
-    orderedLinesDisplay.innerHTML = orderedLines
-      .map((chunk) => `<div class="chunk">${chunk.join("<br>")}</div>`)
-      .join("");
     updateProgressBar();
     return;
   }
@@ -59,9 +56,6 @@ function displayPoem() {
     poemDisplay.appendChild(lineBox);
   });
 
-  orderedLinesDisplay.innerHTML = orderedLines
-    .map((chunk) => `<div class="chunk">${chunk.join("<br>")}</div>`)
-    .join("");
   updateProgressBar();
 }
 
