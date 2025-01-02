@@ -31,7 +31,7 @@ async function loadRandomPoem() {
     }
     currentPoem = await response.json();
     allLines = currentPoem.lines.map(l => l[0]);
-    orderedLastWords = currentPoem.map(l => l[1]);
+    orderedLastWords = currentPoem.lines.map(l => l[1]);
     shuffledLastWords = shuffleArray(orderedLastWords);
     currentIndex = 0;
     movesLeft = 12;
@@ -48,59 +48,6 @@ async function loadRandomPoem() {
 function updatePoemDetails(currentPoem) {
   const poemDetails = document.getElementById("poemDetails");
   poemDetails.innerHTML = `<h3>${currentPoem.title} by ${currentPoem.author}</h3>`;
-}
-
-function displayNextLines() {
-  const poemDisplay = document.getElementById("poemDisplay");
-  const orderedLinesDisplay = document.getElementById("orderedLines");
-
-  if (currentIndex >= allLines.length) {
-    if (originalOrder.length > 0 && !orderedLines.includes(originalOrder)) {
-      orderedLines.push(originalOrder);
-    }
-    poemDisplay.innerHTML =
-      "<h2>Congratulations! You've completed the poem!</h2>";
-    orderedLinesDisplay.innerHTML = orderedLines
-      .map((chunk) => `<div class="chunk">${chunk.join("<br>")}</div>`)
-      .join("");
-    updateProgressBar();
-    return;
-  }
-
-  originalOrder = allLines.slice(currentIndex, currentIndex + linesPerRound);
-  shuffledOrder = [...originalOrder];
-  movesLeft = 12;
-
-  for (let i = shuffledOrder.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    const temp = shuffledOrder[i];
-    shuffledOrder[i] = shuffledOrder[j];
-    shuffledOrder[j] = temp;
-  }
-
-  poemDisplay.innerHTML = `<h2>Reorder these lines:</h2>`;
-  shuffledOrder.forEach((line, index) => {
-    const lineBox = document.createElement("div");
-    lineBox.classList.add("line-box");
-    lineBox.draggable = true;
-    lineBox.textContent = line;
-    lineBox.dataset.index = index;
-    addDragAndDropListeners(lineBox);
-    poemDisplay.appendChild(lineBox);
-  });
-
-  orderedLinesDisplay.innerHTML = orderedLines
-    .map((chunk) => `<div class="chunk">${chunk.join("<br>")}</div>`)
-    .join("");
-  updateProgressBar();
-}
-
-function skipToNextVerse() {
-  if (originalOrder.length > 0) {
-    orderedLines.push(originalOrder);
-  }
-  currentIndex += linesPerRound;
-  displayNextLines();
 }
 
 function addDragAndDropListeners(element) {
