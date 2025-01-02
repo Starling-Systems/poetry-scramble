@@ -15,6 +15,10 @@ def home():
 def sonnet():
     return send_from_directory(app.static_folder, 'sonnet.html')
 
+@app.route('/sonnet-substitution')
+def sonnet():
+    return send_from_directory(app.static_folder, 'sonnet-substitution.html')
+
 
 @app.route('/poem/<int:poem_id>', methods=['GET'])
 def get_poem(poem_id):
