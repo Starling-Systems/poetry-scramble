@@ -81,7 +81,7 @@ async function loadRandomPoem() {
     currentIndex = 0;
     movesLeft = 12;
     points = 0;
-    displaPoem();
+    displayPoem();
     updateProgressBar();
     updatePoemDetails(currentPoem);
   } catch (error) {
