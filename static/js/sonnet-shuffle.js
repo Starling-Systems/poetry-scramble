@@ -7,7 +7,7 @@ let shuffledOrder = [];
 let allLines = [];
 let orderedLines = [];
 let currentIndex = 0;
-let movesLeft = 12;
+let movesLeft = 4;
 let points = 0;
 let currentPoem = {};
 const linesPerRound = 5;
@@ -26,7 +26,7 @@ async function loadRandomPoem() {
     allLines = filterBlankLines(currentPoem.lines);
     orderedLines = [];
     currentIndex = 0;
-    movesLeft = 12;
+    movesLeft = 4;
     points = 0;
     displayNextLines();
     updateProgressBar();
