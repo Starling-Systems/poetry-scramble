@@ -35,7 +35,7 @@ h1 {
     border: 1px solid #ccc;
     border-radius: 5px;
     background-color: #e8e8e8;
-    width: calc(100% - 40px);
+    min-width: 400px;
     text-align: center;
     cursor: grab;
 }
@@ -45,6 +45,25 @@ h1 {
 }
 
 .line-box.over {
+    border: 2px dashed #007bff;
+}
+
+.word-box {
+    padding: 15px;
+    margin: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #e8e8e8;
+    max-width: 100px;
+    text-align: center;
+    cursor: grab;
+}
+
+.word-box.dragging {
+    opacity: 0.5;
+}
+
+.word-box.over {
     border: 2px dashed #007bff;
 }
 
