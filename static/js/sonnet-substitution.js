@@ -20,6 +20,23 @@ let currentPoem = {};
 const linesPerRound = 14;
 let touchStartIndex = null;
 
+function displayWordBag() {
+  const bagDisplay = document.getElementById("wordBag");
+
+  bagDisplay.innerHTML = ``;
+  shuffledLastWords.forEach((line, index) => {
+    const lineBox = document.createElement("div");
+    lineBox.classList.add("word-box");
+    lineBox.draggable = true;
+    lineBox.textContent = line;
+    lineBox.dataset.index = index;
+    addDragAndDropListeners(lineBox);
+    bagDisplay.appendChild(lineBox);
+  });
+
+  updateProgressBar();
+}
+
 function displayPoem() {
   const poemDisplay = document.getElementById("poemDisplay");
 
@@ -44,7 +61,6 @@ function displayPoem() {
     shuffledOrder[j] = temp;
   }
 
-// this should be applied to the wordBag
   poemDisplay.innerHTML = ``;
   shuffledOrder.forEach((line, index) => {
     const lineBox = document.createElement("div");
@@ -61,7 +77,6 @@ function displayPoem() {
 
 async function loadRandomPoem() {
   try {
-    debugger;
     const response = await fetch("/sonnet_deworded");
     console.log("/sonnet_deworded response:");
     console.log(response);
@@ -71,11 +86,13 @@ async function loadRandomPoem() {
     currentPoem = await response.json();
     allLines = currentPoem.lines.map(l => l[0]);
     orderedLastWords = currentPoem.lines.map(l => l[1]);
-    shuffledLastWords = shuffleArray(orderedLastWords);
+    shuffledLastWords = currentPoem.lines.map(l => l[1]);
+    shuffleArray(shuffledLastWords);
     currentIndex = 0;
     movesLeft = 12;
     points = 0;
     displayPoem();
+    displayWordBag();
     updateProgressBar();
     updatePoemDetails(currentPoem);
   } catch (error) {
