@@ -40,35 +40,12 @@ function displayWordBag() {
 function displayPoem() {
   const poemDisplay = document.getElementById("poemDisplay");
 
-  if (currentIndex >= allLines.length) {
-    if (originalOrder.length > 0 && !orderedLines.includes(originalOrder)) {
-      orderedLines.push(originalOrder);
-    }
-    poemDisplay.innerHTML =
-      "<h2>Congratulations! You've completed the poem!</h2>";
-    updateProgressBar();
-    return;
-  }
-
-  originalOrder = allLines.slice(currentIndex, currentIndex + linesPerRound);
-  shuffledOrder = [...originalOrder];
-  movesLeft = 6;
-
-  for (let i = shuffledOrder.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    const temp = shuffledOrder[i];
-    shuffledOrder[i] = shuffledOrder[j];
-    shuffledOrder[j] = temp;
-  }
-
   poemDisplay.innerHTML = ``;
-  shuffledOrder.forEach((line, index) => {
+  allLines.forEach((line, index) => {
     const lineBox = document.createElement("div");
     lineBox.classList.add("line-box");
-    lineBox.draggable = true;
     lineBox.textContent = line;
     lineBox.dataset.index = index;
-    addDragAndDropListeners(lineBox);
     poemDisplay.appendChild(lineBox);
   });
 
