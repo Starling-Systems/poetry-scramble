@@ -46,6 +46,7 @@ function displayPoem() {
     lineBox.classList.add("line-box");
     lineBox.textContent = line;
     lineBox.dataset.index = index;
+    addDropListeners(lineBox);
     poemDisplay.appendChild(lineBox);
   });
 
@@ -120,6 +121,93 @@ function addDragAndDropListeners(element) {
     if (!dragging) return;
 
     const draggingIndex = parseInt(dragging.dataset.index);
+
+    const targetIndex = parseInt(e.target.dataset.index);
+
+    if (
+      !isNaN(draggingIndex) &&
+      !isNaN(targetIndex) &&
+      draggingIndex !== targetIndex
+    ) {
+      const draggedLine = shuffledOrder.splice(draggingIndex, 1)[0];
+      shuffledOrder.splice(targetIndex, 0, draggedLine);
+
+      movesLeft--;
+      updateProgressBar();
+    }
+
+    updateDisplay();
+    checkCorrectOrder();
+  });
+
+  element.addEventListener("touchstart", (e) => {
+    touchStartIndex = parseInt(e.target.dataset.index);
+    e.target.classList.add("dragging");
+  });
+
+  element.addEventListener("touchend", (e) => {
+    const overElement = document.elementFromPoint(
+      e.changedTouches[0].clientX,
+      e.changedTouches[0].clientY
+    );
+
+    if (overElement && overElement.classList.contains("line-box")) {
+      const targetIndex = parseInt(overElement.dataset.index);
+
+      if (
+        !isNaN(touchStartIndex) &&
+        !isNaN(targetIndex) &&
+        touchStartIndex !== targetIndex
+      ) {
+        const draggedLine = shuffledOrder.splice(touchStartIndex, 1)[0];
+        shuffledOrder.splice(targetIndex, 0, draggedLine);
+
+        movesLeft--;
+        updateProgressBar();
+      }
+    }
+
+    document
+      .querySelectorAll(".line-box")
+      .forEach((el) => el.classList.remove("dragging"));
+    updateDisplay();
+    checkCorrectOrder();
+  });
+}
+
+function addDropListeners(element) {
+  
+    element.addEventListener("dragend", (e) => {
+      e.target.classList.remove("dragging");
+      document
+        .querySelectorAll(".line-box.over")
+        .forEach((el) => el.classList.remove("over"));
+    });
+
+    element.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "move";
+      const dragging = document.querySelector(".dragging");
+      if (
+        dragging &&
+        e.target.classList.contains("line-box") &&
+        e.target !== dragging
+      ) {
+        e.target.classList.add("over");
+      }
+    });
+
+    element.addEventListener("dragleave", (e) => {
+      e.target.classList.remove("over");
+    });
+
+  element.addEventListener("drop", (e) => {
+    e.preventDefault();
+    const dragging = document.querySelector(".dragging");
+    if (!dragging) return;
+
+    const draggingIndex = parseInt(dragging.dataset.index);
+
     const targetIndex = parseInt(e.target.dataset.index);
 
     if (
