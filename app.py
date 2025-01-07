@@ -79,7 +79,7 @@ def get_random_poem():
 
         poems = [p for p in poems if int(p["linecount"]) <= 15]
 
-        if not poems:
+        if poems == []:
             get_random_poem()
 
         # Step 4: Choose a random poem
