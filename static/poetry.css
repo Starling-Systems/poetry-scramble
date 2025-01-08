@@ -67,25 +67,25 @@ h1 {
 .poem-display.correct {
   border-color: green;
   border-width: 6px;
-  animation: flash-border 0.5s alternate infinite;
+  animation: flash-border-correct 0.5s alternate infinite;
 }
 
 .poem-display.incorrect {
   border-color: red;
   border-width: 6px;
-  animation: flash-border 0.5s alternate infinite;
+  animation: flash-border-incorrect 0.5s alternate infinite;
 }
 
 .line-box.correct {
   border-color: green;
   border-width: 6px;
-  animation: flash-border 0.5s alternate infinite;
+  animation: flash-border-correct 0.5s alternate infinite;
 }
 
 .line-box.incorrect {
   border-color: red;
   border-width: 6px;
-  animation: flash-border 0.5s alternate infinite;
+  animation: flash-border-incorrect 0.5s alternate infinite;
 }
 
 .ordered-lines {
@@ -138,12 +138,22 @@ h1 {
   background-color: #0056b3;
 }
 
-@keyframes flash-border {
+@keyframes flash-border-correct {
   0% {
     border-color: green;
   }
 
   100% {
     border-color: lightgreen;
+  }
+}
+
+@keyframes flash-border-incorrect {
+  0% {
+    border-color: red;
+  }
+
+  100% {
+    border-color: rgb(241, 234, 234);
   }
 }
