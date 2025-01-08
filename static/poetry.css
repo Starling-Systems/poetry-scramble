@@ -1,132 +1,149 @@
-
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    background-color: #f4f4f9;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #f4f4f9;
 }
 
 h1 {
-    color: #333;
+  color: #333;
 }
 
 .poem-display {
-    margin: 20px 0;
-    padding: 20px;
-    border: 4px solid black;
-    border-radius: 5px;
-    background-color: #fff;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    transition: border 0.3s ease-in-out;
-    user-select: none;
+  margin: 20px 0;
+  padding: 20px;
+  border: 4px solid black;
+  border-radius: 5px;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: border 0.3s ease-in-out;
+  user-select: none;
 }
 
 .line-box {
-    padding: 5px;
-    margin: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #e8e8e8;
-    min-width: 400px;
-    text-align: center;
+  padding: 5px;
+  margin: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #e8e8e8;
+  min-width: 400px;
+  text-align: center;
 }
 
 .line-box.dragging {
-    opacity: 0.5;
+  opacity: 0.5;
 }
 
 .line-box.over {
-    border: 2px dashed #007bff;
+  border: 2px dashed #007bff;
 }
 
 .word-box {
-    padding: 5px;
-    margin: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #e8e8e8;
-    max-width: 100px;
-    text-align: center;
-    cursor: grab;
+  padding: 5px;
+  margin: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #e8e8e8;
+  max-width: 100px;
+  text-align: center;
+  cursor: grab;
 }
 
 .word-box.dragging {
-    opacity: 0.5;
+  opacity: 0.5;
 }
 
 .word-box.over {
-    border: 2px dashed #007bff;
+  border: 2px dashed #007bff;
 }
 
 .poem-display.correct {
-    border-color: green;
-    border-width: 6px;
-    animation: flash-border 0.5s alternate infinite;
+  border-color: green;
+  border-width: 6px;
+  animation: flash-border 0.5s alternate infinite;
+}
+
+.poem-display.incorrect {
+  border-color: red;
+  border-width: 6px;
+  animation: flash-border 0.5s alternate infinite;
+}
+
+.line-box.correct {
+  border-color: green;
+  border-width: 6px;
+  animation: flash-border 0.5s alternate infinite;
+}
+
+.line-box.incorrect {
+  border-color: red;
+  border-width: 6px;
+  animation: flash-border 0.5s alternate infinite;
 }
 
 .ordered-lines {
-    margin-top: 20px;
-    padding: 10px;
-    border: 2px solid #ddd;
-    background-color: #f9f9f9;
-    width: 80%;
+  margin-top: 20px;
+  padding: 10px;
+  border: 2px solid #ddd;
+  background-color: #f9f9f9;
+  width: 80%;
 }
 
 .ordered-lines .chunk {
-    margin-bottom: 10px;
-    border-top: 1px solid #ccc;
-    padding-top: 10px;
+  margin-bottom: 10px;
+  border-top: 1px solid #ccc;
+  padding-top: 10px;
 }
 
 .instructions {
-    margin-top: 10px;
-    padding: 10px;
-    font-size: 14px;
-    color: #555;
-    text-align: center;
+  margin-top: 10px;
+  padding: 10px;
+  font-size: 14px;
+  color: #555;
+  text-align: center;
 }
 
 .progress-bar {
-    margin: 10px 0;
-    padding: 10px;
-    font-size: 14px;
-    text-align: center;
-    color: #333;
+  margin: 10px 0;
+  padding: 10px;
+  font-size: 14px;
+  text-align: center;
+  color: #333;
 }
 
 .score {
-    font-size: 16px;
-    margin-bottom: 10px;
+  font-size: 16px;
+  margin-bottom: 10px;
 }
 
 .next-verse {
-    margin-top: 20px;
-    padding: 10px 20px;
-    font-size: 16px;
-    color: white;
-    background-color: #007bff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+  color: white;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
 .next-verse:hover {
-    background-color: #0056b3;
+  background-color: #0056b3;
 }
 
 @keyframes flash-border {
-    0% {
-        border-color: green;
-    }
+  0% {
+    border-color: green;
+  }
 
-    100% {
-        border-color: lightgreen;
-    }
+  100% {
+    border-color: lightgreen;
+  }
 }
