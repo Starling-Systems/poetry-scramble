@@ -19,6 +19,7 @@ let points = 0;
 let currentPoem = {};
 const linesPerRound = 14;
 let touchStartIndex = null;
+let numLinesCompleted = 0;
 
 function displayWordBag(words) {
   const bagDisplay = document.getElementById("wordBag");
@@ -128,19 +129,25 @@ function addDragAndDropListeners(element) {
     if (!dragging) return;
 
     const draggingIndex = parseInt(dragging.dataset.index);
-
     const targetIndex = parseInt(e.target.dataset.index);
 
-    if (
-      !isNaN(draggingIndex) &&
-      !isNaN(targetIndex) &&
-      draggingIndex !== targetIndex
-    ) {
+    if (draggingIndex !== targetIndex) {
       e.target.classList.add("incorrect");
+      e.target.dataset.correct = false;
       movesLeft--;
+      setTimeout(() => {
+        e.target.classList.remove("incorrect");
+      }, 1000);
       updateProgressBar();
     } else {
       e.target.classList.add("correct");
+      // fill in the completed line:
+      e.target.innerHTML = e.target.innerHTML + " " + dragging.innerHTML;
+      e.target.dataset.correct = true;
+      numLinesCompleted++;
+      setTimeout(() => {
+        e.target.classList.remove("correct");
+      }, 1000);
     }
 
     checkCorrectOrder();
@@ -149,11 +156,18 @@ function addDragAndDropListeners(element) {
 
 function checkCorrectOrder() {
   const poemDisplay = document.getElementById("poemDisplay");
-  if (JSON.stringify(originalOrder) === JSON.stringify(shuffledOrder)) {
+  const lines = document.querySelectorAll(".line-box");
+
+  let correct = true;
+  lines.forEach((line) => {
+    if (line.dataset.correct !== "true") {
+      correct = false;
+    }
+  });
+
+  if (correct) {
     poemDisplay.classList.add("correct");
     points++;
-    orderedLines.push(originalOrder);
-    currentIndex += linesPerRound;
     setTimeout(() => {
       poemDisplay.classList.remove("correct");
       displayPoem();
@@ -162,7 +176,7 @@ function checkCorrectOrder() {
     poemDisplay.classList.add("out-of-moves");
     setTimeout(() => {
       poemDisplay.classList.remove("out-of-moves");
-      skipToNextVerse();
+      loadRandomPoem();
     }, 1000);
   }
   updateProgressBar();
@@ -170,9 +184,8 @@ function checkCorrectOrder() {
 
 function updateProgressBar() {
   const progressBar = document.getElementById("progressBar");
-  const completed = orderedLines.length;
-  const total = Math.ceil(allLines.length / linesPerRound);
-  progressBar.textContent = `Chunks Ordered: ${completed}/${total} | Points: ${points} | Moves Left: ${movesLeft}`;
+  const total = allLines.length;
+  progressBar.textContent = `Lines Ordered: ${numLinesCompleted}/${total} | Points: ${points} | Moves Left: ${movesLeft}`;
 }
 
 window.onload = loadRandomPoem;
