@@ -4,8 +4,8 @@ function filterBlankLines(lines) {
 
 function shuffleArray(array) {
   for (let i = array.length - 1; i >= 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
   }
 }
 
@@ -20,18 +20,27 @@ let currentPoem = {};
 const linesPerRound = 14;
 let touchStartIndex = null;
 
-function displayWordBag() {
+function displayWordBag(words) {
   const bagDisplay = document.getElementById("wordBag");
+  let wordBoxes = [];
+  let shuffledWordBoxes = [];
 
   bagDisplay.innerHTML = ``;
-  shuffledLastWords.forEach((line, index) => {
+  words.forEach((line, index) => {
     const lineBox = document.createElement("div");
     lineBox.classList.add("word-box");
     lineBox.draggable = true;
     lineBox.textContent = line;
+    // The word index matches the sentence index:
     lineBox.dataset.index = index;
     addDragAndDropListeners(lineBox);
-    bagDisplay.appendChild(lineBox);
+    wordBoxes.push(lineBox);
+  });
+
+  // Display the words in shuffled order:
+  shuffleArray(wordBoxes);
+  wordBoxes.forEach((wordBox) => {
+    bagDisplay.appendChild(wordBox);
   });
 
   updateProgressBar();
@@ -62,15 +71,13 @@ async function loadRandomPoem() {
       throw new Error("Failed to load sonnet!");
     }
     currentPoem = await response.json();
-    allLines = currentPoem.lines.map(l => l[0]);
-    orderedLastWords = currentPoem.lines.map(l => l[1]);
-    shuffledLastWords = currentPoem.lines.map(l => l[1]);
-    shuffleArray(shuffledLastWords);
+    allLines = currentPoem.lines.map((l) => l[0]);
+    orderedLastWords = currentPoem.lines.map((l) => l[1]);
     currentIndex = 0;
     movesLeft = 12;
     points = 0;
     displayPoem();
-    displayWordBag();
+    displayWordBag(orderedLastWords);
     updateProgressBar();
     updatePoemDetails(currentPoem);
   } catch (error) {
@@ -176,30 +183,29 @@ function addDragAndDropListeners(element) {
 }
 
 function addDropListeners(element) {
-  
-    element.addEventListener("dragend", (e) => {
-      e.target.classList.remove("dragging");
-      document
-        .querySelectorAll(".line-box.over")
-        .forEach((el) => el.classList.remove("over"));
-    });
+  element.addEventListener("dragend", (e) => {
+    e.target.classList.remove("dragging");
+    document
+      .querySelectorAll(".line-box.over")
+      .forEach((el) => el.classList.remove("over"));
+  });
 
-    element.addEventListener("dragover", (e) => {
-      e.preventDefault();
-      e.dataTransfer.dropEffect = "move";
-      const dragging = document.querySelector(".dragging");
-      if (
-        dragging &&
-        e.target.classList.contains("line-box") &&
-        e.target !== dragging
-      ) {
-        e.target.classList.add("over");
-      }
-    });
+  element.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    const dragging = document.querySelector(".dragging");
+    if (
+      dragging &&
+      e.target.classList.contains("line-box") &&
+      e.target !== dragging
+    ) {
+      e.target.classList.add("over");
+    }
+  });
 
-    element.addEventListener("dragleave", (e) => {
-      e.target.classList.remove("over");
-    });
+  element.addEventListener("dragleave", (e) => {
+    e.target.classList.remove("over");
+  });
 
   element.addEventListener("drop", (e) => {
     e.preventDefault();
