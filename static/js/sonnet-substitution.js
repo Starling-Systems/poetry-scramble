@@ -150,11 +150,11 @@ function addDragAndDropListeners(element) {
       }, 1000);
     }
 
-    checkCorrectOrder();
+    checkCorrectCompletion();
   });
 }
 
-function checkCorrectOrder() {
+function checkCorrectCompletion() {
   const poemDisplay = document.getElementById("poemDisplay");
   const lines = document.querySelectorAll(".line-box");
 
@@ -167,7 +167,6 @@ function checkCorrectOrder() {
 
   if (correct) {
     poemDisplay.classList.add("correct");
-    points++;
     setTimeout(() => {
       poemDisplay.classList.remove("correct");
       displayPoem();
