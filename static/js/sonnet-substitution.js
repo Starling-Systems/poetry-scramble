@@ -185,7 +185,7 @@ function checkCorrectOrder() {
 function updateProgressBar() {
   const progressBar = document.getElementById("progressBar");
   const total = allLines.length;
-  progressBar.textContent = `Lines Ordered: ${numLinesCompleted}/${total} | Points: ${points} | Moves Left: ${movesLeft}`;
+  progressBar.textContent = `Lines Completed: ${numLinesCompleted}/${total} | Moves Left: ${movesLeft}`;
 }
 
 window.onload = loadRandomPoem;
