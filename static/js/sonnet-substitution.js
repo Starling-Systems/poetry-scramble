@@ -75,6 +75,7 @@ async function loadRandomPoem() {
     allLines = currentPoem.lines.map((l) => l[0]);
     orderedLastWords = currentPoem.lines.map((l) => l[1]);
     currentIndex = 0;
+    numLinesCompleted = 0;
     movesLeft = 12;
     points = 0;
     displayPoem();
