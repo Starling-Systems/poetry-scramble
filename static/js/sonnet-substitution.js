@@ -211,7 +211,7 @@ function checkCorrectCompletion() {
 function updateProgressBar() {
   const progressBar = document.getElementById("progressBar");
   const total = allLines.length;
-  progressBar.textContent = `Lines Completed: ${numLinesCompleted}/${total} | Moves Left: ${movesLeft}`;
+  progressBar.textContent = `Lines Completed: ${numLinesCompleted}/${total} | Wrong Guesses Left: ${movesLeft}`;
 }
 
 window.onload = loadRandomPoem;
