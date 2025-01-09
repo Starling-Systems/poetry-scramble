@@ -136,7 +136,6 @@ function addDropListeners(element) {
     } else {
       e.target.classList.add("correct");
       // fill in the completed line:
-      debugger;
       e.target.innerHTML = restoreSentence(e.target.innerHTML, dragging.innerHTML);
       e.target.dataset.correct = true;
       numLinesCompleted++;
