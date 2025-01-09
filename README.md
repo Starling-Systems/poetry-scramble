@@ -16,7 +16,7 @@
     * ABABCDCDEFEFGG
   * will need manual curation / data sourcing
 
-### Sonnet Filler
+### [Sonnet Substitution](https://poetry-scramble-d2120c30fe49.herokuapp.com/sonnet-substitution)
 * fill in the last word of each line
 * easy mode: from a word bank
 * hard mode: no hints given
