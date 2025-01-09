@@ -34,7 +34,7 @@ function displayWordBag(words) {
     wordBox.textContent = word;
     // The word index matches the sentence index:
     wordBox.dataset.index = index;
-    addDragAndDropListeners(wordBox);
+    addDragListeners(wordBox);
     wordBoxes.push(wordBox);
   });
 
@@ -56,7 +56,7 @@ function displayPoem() {
     lineBox.classList.add("line-box");
     lineBox.textContent = line;
     lineBox.dataset.index = index;
-    addDragAndDropListeners(lineBox);
+    addDropListeners(lineBox);
     poemDisplay.appendChild(lineBox);
   });
 
@@ -93,19 +93,8 @@ function updatePoemDetails(currentPoem) {
   poemDetails.innerHTML = `<h3>${currentPoem.title} by ${currentPoem.author}</h3>`;
 }
 
-function addDragAndDropListeners(element) {
-  element.addEventListener("dragstart", (e) => {
-    e.target.classList.add("dragging");
-    e.dataTransfer.setData("text/plain", e.target.dataset.index);
-    e.dataTransfer.effectAllowed = "move";
-  });
-
-  element.addEventListener("dragend", (e) => {
-    e.target.classList.remove("dragging");
-    document
-      .querySelectorAll(".line-box.over")
-      .forEach((el) => el.classList.remove("over"));
-  });
+// was addDragAndDropListeners
+function addDropListeners(element) {
 
   element.addEventListener("dragover", (e) => {
     e.preventDefault();
@@ -153,6 +142,39 @@ function addDragAndDropListeners(element) {
 
     checkCorrectCompletion();
   });
+}
+
+function addDragListeners(element) {
+  element.addEventListener("dragstart", (e) => {
+    e.target.classList.add("dragging");
+    e.dataTransfer.setData("text/plain", e.target.dataset.index);
+    e.dataTransfer.effectAllowed = "move";
+  });
+
+  element.addEventListener("dragend", (e) => {
+    e.target.classList.remove("dragging");
+    document
+      .querySelectorAll(".line-box.over")
+      .forEach((el) => el.classList.remove("over"));
+  });
+
+  element.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    const dragging = document.querySelector(".dragging");
+    if (
+      dragging &&
+      e.target.classList.contains("line-box") &&
+      e.target !== dragging
+    ) {
+      e.target.classList.add("over");
+    }
+  });
+
+  element.addEventListener("dragleave", (e) => {
+    e.target.classList.remove("over");
+  });
+
 }
 
 function checkCorrectCompletion() {
