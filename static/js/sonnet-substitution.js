@@ -9,6 +9,10 @@ function shuffleArray(array) {
   }
 }
 
+function restoreSentence(sentence, word) {
+  return sentence.replace("___", word)
+}
+
 let originalOrder = [];
 let shuffledOrder = [];
 let allLines = [];
@@ -132,7 +136,8 @@ function addDropListeners(element) {
     } else {
       e.target.classList.add("correct");
       // fill in the completed line:
-      e.target.innerHTML = e.target.innerHTML + " " + dragging.innerHTML;
+      debugger;
+      e.target.innerHTML = restoreSentence(e.target.innerHTML, dragging.innerHTML);
       e.target.dataset.correct = true;
       numLinesCompleted++;
       setTimeout(() => {
