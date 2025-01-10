@@ -161,24 +161,6 @@ function addDragListeners(element) {
       .querySelectorAll(".line-box.over")
       .forEach((el) => el.classList.remove("over"));
   });
-
-  element.addEventListener("dragover", (e) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = "move";
-    const dragging = document.querySelector(".dragging");
-    if (
-      dragging &&
-      e.target.classList.contains("line-box") &&
-      e.target !== dragging
-    ) {
-      e.target.classList.add("over");
-    }
-  });
-
-  element.addEventListener("dragleave", (e) => {
-    e.target.classList.remove("over");
-  });
-
 }
 
 function checkCorrectCompletion() {
