@@ -13,16 +13,10 @@ function restoreSentence(sentence, word) {
   return sentence.replace("___", word)
 }
 
-let originalOrder = [];
-let shuffledOrder = [];
 let allLines = [];
-let orderedLines = [];
 let currentIndex = 0;
 let movesLeft = 6;
-let points = 0;
 let currentPoem = {};
-const linesPerRound = 14;
-let touchStartIndex = null;
 let numLinesCompleted = 0;
 
 function displayWordBag(words) {
@@ -80,8 +74,7 @@ async function loadRandomPoem() {
     orderedLastWords = currentPoem.lines.map((l) => l[1]);
     currentIndex = 0;
     numLinesCompleted = 0;
-    movesLeft = 12;
-    points = 0;
+    movesLeft = 6;
     displayPoem();
     displayWordBag(orderedLastWords);
     updateProgressBar();
