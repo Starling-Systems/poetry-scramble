@@ -67,9 +67,8 @@ function makeOptionsDiv(correctWord, lineButton, index) {
   return optionsDiv;
 }
 
-function displayPoem() {
-  const poemDisplay = $("#poemDisplay");
-  poemDisplay.html("");
+function displayPoem(gameState) {
+  const poemDisplay = document.getElementById("poemDisplay");
 
   initWordBag(allLines.map((l) => l[1]));
   shuffleWordBag();
@@ -96,12 +95,26 @@ function displayPoem() {
     dropdownDiv.append(lineButton);
     dropdownDiv.append(optionsDiv);
     poemDisplay.append(dropdownDiv);
+    const lineBox = document.createElement("div");
+    lineBox.classList.add("line-box");
+    lineBox.textContent = line;
+    lineBox.dataset.index = index;
+    addDropListeners(lineBox);
+    if (gameState && gameState.completed_lines) {
+      let playerSolvedThisLine = gameState.completed_lines[index];
+      if (playerSolvedThisLine) {
+        let tc = lineBox.textContent;
+        tc = `(${playerSolvedThisLine}) ` + tc;
+        lineBox.textContent = tc;
+      }
+    }
+    poemDisplay.appendChild(lineBox);
   });
 
   updateProgressBar();
 }
 
-async function loadRandomPoem() {
+async function loadRandomPoem(gameState) {
   try {
     const response = await fetch("/sonnet_deworded");
     console.log("/sonnet_deworded response:");
@@ -223,6 +236,10 @@ socket.on("update", (gameState) => {
   updateUI(gameState);
 });
 
+socket.on("join", (gameState) => {
+  loadRandomPoem(gameState);
+});
+
 function completeLine(lineIndex) {
   socket.emit("complete_line", {
     room: roomName,
@@ -232,23 +249,7 @@ function completeLine(lineIndex) {
 }
 
 function updateUI(gameState) {
-  const linesDiv = document.getElementById("poemDisplay");
-  linesDiv.innerHTML = "";
-  for (let i = 0; i < 14; i++) {
-    // Assume 14 lines for a sonnet
-    const lineDiv = document.createElement("div");
-    lineDiv.classList.add("line");
-    if (gameState.completed_lines[i]) {
-      lineDiv.textContent = `Line ${i + 1} - Completed by ${
-        gameState.completed_lines[i]
-      }`;
-    } else {
-      lineDiv.textContent = `Line ${i + 1} - Drag to complete`;
-      lineDiv.setAttribute("onclick", `completeLine(${i})`);
-    }
-    linesDiv.appendChild(lineDiv);
-  }
-
+  displayPoem(gameState);
   const playersList = document.getElementById("players");
   playersList.innerHTML = "";
   gameState.players.forEach((player) => {
