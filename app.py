@@ -113,6 +113,8 @@ def on_join(data):
         game_states[room] = {'completed_lines': {}, 'players': []}
     if player not in game_states[room]['players']:
         game_states[room]['players'].append(player)
+    print("join, update: game_states:")
+    print(game_states)
     emit('update', game_states[room], room=room)
 
 @socketio.on('complete_line')
@@ -122,6 +124,8 @@ def complete_line(data):
     player = data['player']
     # Update game state
     game_states[room]['completed_lines'][line_index] = player
+    print("complete_line, update: game_states:")
+    print(game_states)
     emit('update', game_states[room], room=room)
 
 
