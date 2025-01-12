@@ -1,3 +1,4 @@
 httpserver
 Flask
 requests
+flask-socketio

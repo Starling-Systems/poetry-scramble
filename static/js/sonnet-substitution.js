@@ -250,4 +250,57 @@ function updateProgressBar() {
   progressBar.textContent = `Lines Completed: ${numLinesCompleted}/${total} | Wrong Guesses Left: ${movesLeft}`;
 }
 
+const socket = io();
+let playerName = "";
+const roomName = "room1";
+
+function joinGame() {
+  playerName = document.getElementById("playerName").value;
+  if (!playerName) {
+    alert("Please enter your name");
+    return;
+  }
+  document.getElementById("gameArea").hidden = false;
+  socket.emit("join", { room: roomName, player: playerName });
+}
+
+socket.on("update", (gameState) => {
+  updateUI(gameState);
+});
+
+function completeLine(lineIndex) {
+  socket.emit("complete_line", {
+    room: roomName,
+    line_index: lineIndex,
+    player: playerName,
+  });
+}
+
+function updateUI(gameState) {
+  const linesDiv = document.getElementById("poemDisplay");
+  linesDiv.innerHTML = "";
+  for (let i = 0; i < 14; i++) {
+    // Assume 14 lines for a sonnet
+    const lineDiv = document.createElement("div");
+    lineDiv.classList.add("line");
+    if (gameState.completed_lines[i]) {
+      lineDiv.textContent = `Line ${i + 1} - Completed by ${
+        gameState.completed_lines[i]
+      }`;
+    } else {
+      lineDiv.textContent = `Line ${i + 1} - Drag to complete`;
+      lineDiv.setAttribute("onclick", `completeLine(${i})`);
+    }
+    linesDiv.appendChild(lineDiv);
+  }
+
+  const playersList = document.getElementById("players");
+  playersList.innerHTML = "";
+  gameState.players.forEach((player) => {
+    const li = document.createElement("li");
+    li.textContent = player;
+    playersList.appendChild(li);
+  });
+}
+
 window.onload = loadRandomPoem;

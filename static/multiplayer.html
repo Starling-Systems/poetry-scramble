@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sonnet Shuffle Multiplayer</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+      }
+      .game-area {
+        margin-top: 20px;
+        text-align: center;
+      }
+      .line {
+        margin: 5px;
+        padding: 10px;
+        border: 1px dashed #ccc;
+        border-radius: 5px;
+        cursor: grab;
+      }
+      .player-info {
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Sonnet Shuffle Multiplayer</h1>
+    <div class="player-info">
+      <label for="playerName">Your Name:</label>
+      <input type="text" id="playerName" placeholder="Enter your name" />
+      <button onclick="joinGame()">Join Game</button>
+    </div>
+    <div id="gameArea" class="game-area" hidden>
+      <h2>Room: <span id="roomName">room1</span></h2>
+      <div id="lines"></div>
+      <h3>Players:</h3>
+      <ul id="players"></ul>
+    </div>
+
+    <script src="https://cdn.socket.io/4.3.2/socket.io.min.js"></script>
+    <script>
+      const socket = io();
+      let playerName = "";
+      const roomName = "room1";
+
+      function joinGame() {
+        playerName = document.getElementById("playerName").value;
+        if (!playerName) {
+          alert("Please enter your name");
+          return;
+        }
+        document.getElementById("gameArea").hidden = false;
+        socket.emit("join", { room: roomName, player: playerName });
+      }
+
+      socket.on("update", (gameState) => {
+        updateUI(gameState);
+      });
+
+      function completeLine(lineIndex) {
+        socket.emit("complete_line", {
+          room: roomName,
+          line_index: lineIndex,
+          player: playerName,
+        });
+      }
+
+      function updateUI(gameState) {
+        const linesDiv = document.getElementById("lines");
+        linesDiv.innerHTML = "";
+        for (let i = 0; i < 14; i++) {
+          // Assume 14 lines for a sonnet
+          const lineDiv = document.createElement("div");
+          lineDiv.classList.add("line");
+          if (gameState.completed_lines[i]) {
+            lineDiv.textContent = `Line ${i + 1} - Completed by ${
+              gameState.completed_lines[i]
+            }`;
+          } else {
+            lineDiv.textContent = `Line ${i + 1} - Drag to complete`;
+            lineDiv.setAttribute("onclick", `completeLine(${i})`);
+          }
+          linesDiv.appendChild(lineDiv);
+        }
+
+        const playersList = document.getElementById("players");
+        playersList.innerHTML = "";
+        gameState.players.forEach((player) => {
+          const li = document.createElement("li");
+          li.textContent = player;
+          playersList.appendChild(li);
+        });
+      }
+    </script>
+  </body>
+</html>
