@@ -1,29 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Poetry Games : Sonnet Shuffle</title>
+    <link rel="stylesheet" href="/static/poetry.css" />
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Poetry Games : Sonnet Shuffle</title>
-  <link rel="stylesheet" href="/static/poetry.css">
-</head>
+  <body>
+    <script src="https://cdn.socket.io/4.3.2/socket.io.min.js"></script>
+    <h1>Sonnet shuffle</h1>
+    <div class="player-info">
+      <label for="playerName">Your Name:</label>
+      <input type="text" id="playerName" placeholder="Enter your name" />
+      <button onclick="joinGame()">Join Game</button>
+    </div>
+    <div id="gameArea" class="game-area" hidden>
+      <h2>Room: <span id="roomName">room1</span></h2>
+      <div id="lines"></div>
+      <h3>Players:</h3>
+      <ul id="players"></ul>
+    </div>
 
-<body>
-  <h1>Sonnet shuffle</h1>
-  <div id="poemDetails"></div>
-  <div class="progress-bar" id="progressBar">
-    Chunks Ordered: 0/0 | Points: 0 | Moves Left: 4
-  </div>
-  <div class="instructions">
-    Drag and drop the lines to put them in order.
-  </div>
-  <button class="next-verse" onclick="skipToNextVerse()">Skip chunk</button>
-  <div id="poemDisplay" class="poem-display">Loading poem...</div>
-  <div id="lineBag" class="line-bag"></div>
-  <div id="orderedLines" class="ordered-lines">
-    Ordered lines will appear here.
-  </div>
-  <script src="static/js/sonnet-shuffle.js"></script>
-</body>
-
+    <div id="poemDetails"></div>
+    <div class="progress-bar" id="progressBar">
+      Chunks Ordered: 0/0 | Points: 0 | Moves Left: 4
+    </div>
+    <div class="instructions">
+      Drag and drop the lines to put them in order.
+    </div>
+    <button class="next-verse" onclick="skipToNextVerse()">Skip chunk</button>
+    <div id="poemDisplay" class="poem-display">Loading poem...</div>
+    <div id="lineBag" class="line-bag"></div>
+    <div id="orderedLines" class="ordered-lines">
+      Ordered lines will appear here.
+    </div>
+    <script src="static/js/sonnet-shuffle.js"></script>
+  </body>
 </html>
