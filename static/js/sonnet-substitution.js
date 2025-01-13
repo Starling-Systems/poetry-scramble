@@ -156,9 +156,16 @@ function addDragListeners(element) {
   });
 }
 
+function removeDragListeners(element) {
+  element.removeEventListener("dragstart");
+  element.removeEventListener("dragend");
+}
+
 function checkCorrectCompletion() {
   const poemDisplay = document.getElementById("poemDisplay");
   const lines = document.querySelectorAll(".line-box");
+  const progressBar = document.getElementById("progressBar")
+  const wordBoxen = document.querySelectorAll(".word-box");
 
   let correct = true;
   lines.forEach((line) => {
@@ -174,13 +181,10 @@ function checkCorrectCompletion() {
       displayPoem();
     }, 1000);
   } else if (movesLeft <= 0) {
-    poemDisplay.classList.add("out-of-moves");
-    setTimeout(() => {
-      poemDisplay.classList.remove("out-of-moves");
-      loadRandomPoem();
-    }, 1000);
-  }
-  updateProgressBar();
+    progressBar.classList.add("out-of-moves");
+    progressBar.innerHTML ='Out of Moves!';
+    wordBoxen.forEach(e => removeDragListeners(e));
+  } 
 }
 
 function updateProgressBar() {
