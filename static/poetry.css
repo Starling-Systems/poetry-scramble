@@ -123,6 +123,16 @@ h1 {
   background-color: #0d6efd2b;
 }
 
+.progress-bar.out-of-moves {
+  margin: 10px 0;
+  padding: 10px;
+  font-size: 14px;
+  text-align: center;
+  color: #000;
+  background-color: red;
+}
+
+
 .score {
   font-size: 16px;
   margin-bottom: 10px;
