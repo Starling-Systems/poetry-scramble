@@ -30,8 +30,8 @@ function displayWordBag(words) {
     wordBox.classList.add("word-box");
     wordBox.draggable = true;
     wordBox.textContent = word;
-    // The word index matches the sentence index:
-    wordBox.dataset.index = index;
+    // The word to place matches the sentence's missing word:
+    wordBox.dataset.word = word;
     addDragListeners(wordBox);
     wordBoxes.push(wordBox);
   });
@@ -52,8 +52,8 @@ function displayPoem() {
   allLines.forEach((line, index) => {
     const lineBox = document.createElement("div");
     lineBox.classList.add("line-box");
-    lineBox.textContent = line;
-    lineBox.dataset.index = index;
+    lineBox.textContent = line[0];
+    lineBox.dataset.word = line[1];
     addDropListeners(lineBox);
     poemDisplay.appendChild(lineBox);
   });
@@ -70,7 +70,7 @@ async function loadRandomPoem() {
       throw new Error("Failed to load sonnet!");
     }
     currentPoem = await response.json();
-    allLines = currentPoem.lines.map((l) => l[0]);
+    allLines = currentPoem.lines.map((l) => [l[0], l[1]]);
     orderedLastWords = currentPoem.lines.map((l) => l[1]);
     currentIndex = 0;
     numLinesCompleted = 0;
@@ -115,10 +115,10 @@ function addDropListeners(element) {
     const dragging = document.querySelector(".dragging");
     if (!dragging) return;
 
-    const draggingIndex = parseInt(dragging.dataset.index);
-    const targetIndex = parseInt(e.target.dataset.index);
+    const draggingWord = dragging.dataset.word;
+    const targetWord = e.target.dataset.word;
 
-    if (draggingIndex !== targetIndex) {
+    if (draggingWord !== targetWord) {
       e.target.classList.add("incorrect");
       e.target.dataset.correct = false;
       movesLeft--;
@@ -144,7 +144,7 @@ function addDropListeners(element) {
 function addDragListeners(element) {
   element.addEventListener("dragstart", (e) => {
     e.target.classList.add("dragging");
-    e.dataTransfer.setData("text/plain", e.target.dataset.index);
+    e.dataTransfer.setData("text/plain", e.target.dataset.word);
     e.dataTransfer.effectAllowed = "move";
   });
 
