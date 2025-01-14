@@ -33,6 +33,7 @@ function displayWordBag(words) {
     // The word to place matches the sentence's missing word:
     wordBox.dataset.word = word;
     addDragListeners(wordBox);
+//    $(wordBox).draggable();
     wordBoxes.push(wordBox);
   });
 
@@ -91,6 +92,36 @@ function updatePoemDetails(currentPoem) {
 }
 
 // was addDragAndDropListeners
+function handleDrop(e) {
+  e.preventDefault();
+  const dragging = document.querySelector(".dragging");
+  if (!dragging) return;
+
+  const draggingWord = dragging.dataset.word;
+  const targetWord = e.target.dataset.word;
+
+  if (draggingWord !== targetWord) {
+    e.target.classList.add("incorrect");
+    e.target.dataset.correct = false;
+    movesLeft--;
+    setTimeout(() => {
+      e.target.classList.remove("incorrect");
+    }, 1000);
+    updateProgressBar();
+  } else {
+    e.target.classList.add("correct");
+    // fill in the completed line:
+    e.target.innerHTML = restoreSentence(e.target.innerHTML, dragging.innerHTML);
+    e.target.dataset.correct = true;
+    numLinesCompleted++;
+    setTimeout(() => {
+      e.target.classList.remove("correct");
+    }, 1000);
+  }
+
+  checkCorrectCompletion();
+}
+
 function addDropListeners(element) {
 
   element.addEventListener("dragover", (e) => {
@@ -110,50 +141,32 @@ function addDropListeners(element) {
     e.target.classList.remove("over");
   });
 
-  element.addEventListener("drop", (e) => {
-    e.preventDefault();
-    const dragging = document.querySelector(".dragging");
-    if (!dragging) return;
-
-    const draggingWord = dragging.dataset.word;
-    const targetWord = e.target.dataset.word;
-
-    if (draggingWord !== targetWord) {
-      e.target.classList.add("incorrect");
-      e.target.dataset.correct = false;
-      movesLeft--;
-      setTimeout(() => {
-        e.target.classList.remove("incorrect");
-      }, 1000);
-      updateProgressBar();
-    } else {
-      e.target.classList.add("correct");
-      // fill in the completed line:
-      e.target.innerHTML = restoreSentence(e.target.innerHTML, dragging.innerHTML);
-      e.target.dataset.correct = true;
-      numLinesCompleted++;
-      setTimeout(() => {
-        e.target.classList.remove("correct");
-      }, 1000);
-    }
-
-    checkCorrectCompletion();
-  });
+  element.addEventListener("drop", handleDrop);
 }
 
-function addDragListeners(element) {
-  element.addEventListener("dragstart", (e) => {
-    e.target.classList.add("dragging");
-    e.dataTransfer.setData("text/plain", e.target.dataset.word);
-    e.dataTransfer.effectAllowed = "move";
-  });
+function handleMove(e) {
+  e.target.classList.add("dragging");
+  e.dataTransfer.setData("text/plain", e.target.dataset.word);
+  e.dataTransfer.effectAllowed = "move";
+}
 
-  element.addEventListener("dragend", (e) => {
-    e.target.classList.remove("dragging");
-    document
-      .querySelectorAll(".line-box.over")
-      .forEach((el) => el.classList.remove("over"));
-  });
+function handleEnd(e) {
+  e.target.classList.remove("dragging");
+  document
+    .querySelectorAll(".line-box.over")
+    .forEach((el) => el.classList.remove("over"));
+} 
+
+function addDragListeners(element) {
+
+//  el.addEventListener("touchstart", handleStart);
+  element.addEventListener("touchend", handleDrop);
+//  el.addEventListener("touchcancel", handleCancel);
+  element.addEventListener("touchmove", handleMove);
+
+  element.addEventListener("dragstart", handleMove);
+
+  element.addEventListener("dragend", handleEnd);
 }
 
 function removeDragListeners(element) {
@@ -183,7 +196,7 @@ function checkCorrectCompletion() {
   } else if (movesLeft <= 0) {
     progressBar.classList.add("out-of-moves");
     progressBar.innerHTML ='Out of Moves!';
-    wordBoxen.forEach(e => removeDragListeners(e));
+//    wordBoxen.forEach(e => removeDragListeners(e));
   } 
 }
 
