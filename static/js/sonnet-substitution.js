@@ -10,7 +10,7 @@ function shuffleArray(array) {
 }
 
 function restoreSentence(sentence, word) {
-  return sentence.replace("___", word)
+  return sentence.replace("___", word);
 }
 
 let allLines = [];
@@ -33,7 +33,8 @@ function displayWordBag(words) {
     // The word to place matches the sentence's missing word:
     wordBox.dataset.word = word;
     addDragListeners(wordBox);
-//    $(wordBox).draggable();
+    addTouchListenersForWords(wordBox);
+    //    $(wordBox).draggable();
     wordBoxes.push(wordBox);
   });
 
@@ -111,7 +112,10 @@ function handleDrop(e) {
   } else {
     e.target.classList.add("correct");
     // fill in the completed line:
-    e.target.innerHTML = restoreSentence(e.target.innerHTML, dragging.innerHTML);
+    e.target.innerHTML = restoreSentence(
+      e.target.innerHTML,
+      dragging.innerHTML
+    );
     e.target.dataset.correct = true;
     numLinesCompleted++;
     setTimeout(() => {
@@ -123,7 +127,6 @@ function handleDrop(e) {
 }
 
 function addDropListeners(element) {
-
   element.addEventListener("dragover", (e) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = "move";
@@ -155,17 +158,16 @@ function handleEnd(e) {
   document
     .querySelectorAll(".line-box.over")
     .forEach((el) => el.classList.remove("over"));
-} 
+}
+
+function addTouchListenersForWords(wordElement) {
+  wordElement.addEventListener("touchstart", handleTouchStart); // Touch drag start
+  wordElement.addEventListener("touchmove", handleTouchMove); // Touch drag move
+  wordElement.addEventListener("touchend", handleTouchEnd); // Touch drag end
+}
 
 function addDragListeners(element) {
-
-//  el.addEventListener("touchstart", handleStart);
-  element.addEventListener("touchend", handleDrop);
-//  el.addEventListener("touchcancel", handleCancel);
-  element.addEventListener("touchmove", handleMove);
-
   element.addEventListener("dragstart", handleMove);
-
   element.addEventListener("dragend", handleEnd);
 }
 
@@ -174,10 +176,56 @@ function removeDragListeners(element) {
   element.removeEventListener("dragend");
 }
 
+let touchDraggedElement;
+// Touch handlers
+function handleTouchStart(event) {
+  touchDraggedElement = event.target;
+  touchDraggedElement.classList.add("dragging");
+}
+
+function handleTouchMove(event) {
+  if (!touchDraggedElement) return;
+
+  const touch = event.touches[0];
+  const elementAtTouch = document.elementFromPoint(
+    touch.clientX,
+    touch.clientY
+  );
+
+  if (elementAtTouch && elementAtTouch.classList.contains("line")) {
+    elementAtTouch.classList.add("over");
+  } else {
+    document
+      .querySelectorAll(".line.over")
+      .forEach((el) => el.classList.remove("over"));
+  }
+}
+
+function handleTouchEnd(event) {
+  if (!touchDraggedElement) return;
+
+  const touch = event.changedTouches[0];
+  const elementAtTouch = document.elementFromPoint(
+    touch.clientX,
+    touch.clientY
+  );
+
+  if (elementAtTouch && elementAtTouch.classList.contains("line")) {
+    completeLine(
+      elementAtTouch.dataset.lineIndex,
+      touchDraggedElement.textContent
+    );
+    elementAtTouch.classList.remove("over");
+  }
+
+  touchDraggedElement.classList.remove("dragging");
+  touchDraggedElement = null;
+}
+
 function checkCorrectCompletion() {
   const poemDisplay = document.getElementById("poemDisplay");
   const lines = document.querySelectorAll(".line-box");
-  const progressBar = document.getElementById("progressBar")
+  const progressBar = document.getElementById("progressBar");
   const wordBoxen = document.querySelectorAll(".word-box");
 
   let correct = true;
@@ -195,9 +243,9 @@ function checkCorrectCompletion() {
     }, 1000);
   } else if (movesLeft <= 0) {
     progressBar.classList.add("out-of-moves");
-    progressBar.innerHTML ='Out of Moves!';
-//    wordBoxen.forEach(e => removeDragListeners(e));
-  } 
+    progressBar.innerHTML = "Out of Moves!";
+    //    wordBoxen.forEach(e => removeDragListeners(e));
+  }
 }
 
 function updateProgressBar() {
