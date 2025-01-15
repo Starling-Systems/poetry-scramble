@@ -94,7 +94,6 @@ function updatePoemDetails(currentPoem) {
 
 // was addDragAndDropListeners
 function handleDrop(e) {
-  e.preventDefault();
   const dragging = document.querySelector(".dragging");
   if (!dragging) return;
 
@@ -181,10 +180,15 @@ let touchDraggedElement;
 function handleTouchStart(event) {
   touchDraggedElement = event.target;
   touchDraggedElement.classList.add("dragging");
+  // Prevent touch scrolling on the start of a drag
+  event.preventDefault();
 }
 
 function handleTouchMove(event) {
   if (!touchDraggedElement) return;
+
+  // Prevent touch scrolling during dragging
+  event.preventDefault();
 
   const touch = event.touches[0];
   const elementAtTouch = document.elementFromPoint(
@@ -202,6 +206,8 @@ function handleTouchMove(event) {
 }
 
 function handleTouchEnd(event) {
+  debugger;
+  event.preventDefault();
   if (!touchDraggedElement) return;
 
   const touch = event.changedTouches[0];
@@ -210,12 +216,9 @@ function handleTouchEnd(event) {
     touch.clientY
   );
 
-  if (elementAtTouch && elementAtTouch.classList.contains("line")) {
-    completeLine(
-      elementAtTouch.dataset.lineIndex,
-      touchDraggedElement.textContent
-    );
+  if (elementAtTouch && elementAtTouch.classList.contains("line-box")) {
     elementAtTouch.classList.remove("over");
+    handleDrop(elementAtTouch);
   }
 
   touchDraggedElement.classList.remove("dragging");
