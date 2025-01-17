@@ -98,27 +98,24 @@ function handleDrop(e) {
   if (!dragging) return;
 
   const draggingWord = dragging.dataset.word;
-  const targetWord = e.target.dataset.word;
+  const targetWord = e.dataset.word;
 
   if (draggingWord !== targetWord) {
-    e.target.classList.add("incorrect");
-    e.target.dataset.correct = false;
+    e.classList.add("incorrect");
+    e.dataset.correct = false;
     movesLeft--;
     setTimeout(() => {
-      e.target.classList.remove("incorrect");
+      e.classList.remove("incorrect");
     }, 1000);
     updateProgressBar();
   } else {
-    e.target.classList.add("correct");
+    e.classList.add("correct");
     // fill in the completed line:
-    e.target.innerHTML = restoreSentence(
-      e.target.innerHTML,
-      dragging.innerHTML
-    );
-    e.target.dataset.correct = true;
+    e.innerHTML = restoreSentence(e.innerHTML, dragging.innerHTML);
+    e.dataset.correct = true;
     numLinesCompleted++;
     setTimeout(() => {
-      e.target.classList.remove("correct");
+      e.classList.remove("correct");
     }, 1000);
   }
 
