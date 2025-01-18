@@ -250,6 +250,7 @@ function checkCorrectCompletion() {
   } else if (movesLeft <= 0) {
     progressBar.classList.add("out-of-moves");
     progressBar.innerHTML = "Out of Moves!";
+    poemDisplay.innerHTML = "Reload for another poem."
     //    wordBoxen.forEach(e => removeDragListeners(e));
   }
 }
