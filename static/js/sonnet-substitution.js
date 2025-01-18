@@ -1,7 +1,3 @@
-function filterBlankLines(lines) {
-  return lines.filter((line) => line.trim() !== "");
-}
-
 function shuffleArray(array) {
   for (let i = array.length - 1; i >= 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -14,7 +10,6 @@ function restoreSentence(sentence, word) {
 }
 
 let allLines = [];
-let currentIndex = 0;
 let movesLeft = 6;
 let currentPoem = {};
 let numLinesCompleted = 0;
@@ -209,7 +204,6 @@ function handleTouchMove(event) {
 }
 
 function handleTouchEnd(event) {
-  debugger;
   event.preventDefault();
   if (!touchDraggedElement) return;
 
