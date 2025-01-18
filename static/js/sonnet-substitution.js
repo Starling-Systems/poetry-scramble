@@ -117,8 +117,10 @@ function handleDrop(e) {
     numLinesCompleted++;
     // keep the green outline for correct answers
     setTimeout(() => {
-      dragging.classList.add("completed");
+      e.classList.remove("incorrect");
+      e.classList.remove("attempted");
       e.classList.remove("correct");
+      dragging.classList.add("completed");
       e.classList.add("completed");
     }, 1000);
   }
