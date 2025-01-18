@@ -106,6 +106,7 @@ function handleDrop(e) {
     movesLeft--;
     setTimeout(() => {
       e.classList.remove("incorrect");
+      e.classList.add("attempted");
     }, 1000);
     updateProgressBar();
   } else {
@@ -114,8 +115,11 @@ function handleDrop(e) {
     e.innerHTML = restoreSentence(e.innerHTML, dragging.innerHTML);
     e.dataset.correct = true;
     numLinesCompleted++;
+    // keep the green outline for correct answers
     setTimeout(() => {
+      dragging.classList.add("completed");
       e.classList.remove("correct");
+      e.classList.add("completed");
     }, 1000);
   }
 
