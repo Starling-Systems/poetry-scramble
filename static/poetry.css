@@ -78,6 +78,11 @@ h1 {
   border: 2px dashed #007bff;
 }
 
+.word-box.completed {
+  border-color: lightgreen;
+  border-width: 4px;
+}
+
 .poem-display.correct {
   border-color: green;
   border-width: 6px;
@@ -96,10 +101,20 @@ h1 {
   animation: flash-border-correct 0.5s alternate infinite;
 }
 
+.line-box.completed {
+  border-color: lightgreen;
+  border-width: 4px;
+}
+
 .line-box.incorrect {
-  border-color: red;
-  border-width: 6px;
+  border-color: orangered;
+  border-width: 4px;
   animation: flash-border-incorrect 0.5s alternate infinite;
+}
+
+.line-box.attempted {
+  border-color: red;
+  border-width: 4px;
 }
 
 .ordered-lines {
