@@ -14,45 +14,32 @@ let movesLeft = 6;
 let currentPoem = {};
 let numLinesCompleted = 0;
 
-function displayWordBag(words) {
-  const bagDisplay = document.getElementById("wordBag");
-  let wordBoxes = [];
-  let shuffledWordBoxes = [];
-
-  bagDisplay.innerHTML = ``;
-  words.forEach((word, index) => {
-    const wordBox = document.createElement("div");
-    wordBox.classList.add("word-box");
-    wordBox.draggable = true;
-    wordBox.textContent = word;
-    // The word to place matches the sentence's missing word:
-    wordBox.dataset.word = word;
-    addDragListeners(wordBox);
-    addTouchListenersForWords(wordBox);
-    //    $(wordBox).draggable();
-    wordBoxes.push(wordBox);
-  });
-
-  // Display the words in shuffled order:
-  shuffleArray(wordBoxes);
-  wordBoxes.forEach((wordBox) => {
-    bagDisplay.appendChild(wordBox);
-  });
-
-  updateProgressBar();
-}
-
 function displayPoem() {
   const poemDisplay = document.getElementById("poemDisplay");
-
   poemDisplay.innerHTML = ``;
+
+  let dropdownDiv = $(`<div class="dropdown">`);
+  let optionsDiv;
   allLines.forEach((line, index) => {
-    const lineBox = document.createElement("div");
-    lineBox.classList.add("line-box");
-    lineBox.textContent = line[0];
-    lineBox.dataset.word = line[1];
-    addDropListeners(lineBox);
-    poemDisplay.appendChild(lineBox);
+    let lineText = line[0];
+    let lineButton = $(`
+    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      ${lineText}
+    </button>
+    `);
+    dropdownDiv.append(lineButton);
+    const lineBox = $(`<div class="dropdown">`);
+    optionsDiv = $(
+      `<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">`
+    );
+    wordBag.forEach((word, index) => {
+      if (word.matched) {
+        optionsDiv.append($(`<a class="dropdown-item">${word.word}</a>`));
+      }
+    });
+    lineBox.append(optionsDiv);
+    dropdownDiv.append(lineBox);
+    poemDisplay.appendChild(dropdownDiv);
   });
 
   updateProgressBar();
@@ -73,13 +60,18 @@ async function loadRandomPoem() {
     numLinesCompleted = 0;
     movesLeft = 6;
     displayPoem();
-    displayWordBag(orderedLastWords);
+    initWordBag(orderedLastWords);
     updateProgressBar();
     updatePoemDetails(currentPoem);
   } catch (error) {
     document.getElementById("poemDisplay").textContent =
       "Error loading sonnet: " + error.message;
   }
+}
+
+let wordBag = [];
+function initWordBag(words) {
+  words.forEach((w) => wordBag.append({ word: w, matched: false }));
 }
 
 function updatePoemDetails(currentPoem) {
@@ -244,7 +236,7 @@ function checkCorrectCompletion() {
   } else if (movesLeft <= 0) {
     progressBar.classList.add("out-of-moves");
     progressBar.innerHTML = "Out of Moves!";
-    poemDisplay.innerHTML = "Reload for another poem."
+    poemDisplay.innerHTML = "Reload for another poem.";
     //    wordBoxen.forEach(e => removeDragListeners(e));
   }
 }
