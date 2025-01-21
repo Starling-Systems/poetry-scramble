@@ -18,35 +18,33 @@ function displayPoem() {
   const poemDisplay = $("#poemDisplay");
   poemDisplay.innerHTML = "";
 
-  let dropdownDiv = $(`<div class="dropdown">`);
   let optionsDiv;
   initWordBag(allLines.map((l) => l[1]));
   allLines.forEach((line, index) => {
+    let dropdownDiv = $(`<div class="dropdown">`);
     let lineText = line[0];
     let lineButton = $(`
-    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
       ${lineText}
     </button>
     `);
     dropdownDiv.append(lineButton);
-    const lineBox = $(`<div class="dropdown">`);
-    optionsDiv = $(
-      `<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">`
-    );
+    optionsDiv = $(`<div class="dropdown-menu">`);
     wordBag.forEach((word, index) => {
       if (word.unmatched) {
         optionsDiv.append($(`<a class="dropdown-item">${word.word}</a>`));
       }
     });
-    lineBox.append(optionsDiv);
-    dropdownDiv.append(lineBox);
-    poemDisplay.appendChild(dropdownDiv);
+    debugger;
+    dropdownDiv.append(optionsDiv);
+    poemDisplay.append(dropdownDiv);
   });
 
   updateProgressBar();
 }
 
 async function loadRandomPoem() {
+  debugger;
   try {
     const response = await fetch("/sonnet_deworded");
     console.log("/sonnet_deworded response:");
