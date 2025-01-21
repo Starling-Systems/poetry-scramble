@@ -23,8 +23,9 @@ function displayPoem() {
   allLines.forEach((line, index) => {
     let dropdownDiv = $(`<div class="dropdown">`);
     let lineText = line[0];
+    let correctWord = line[1];
     let lineButton = $(`
-    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <button class="btn btn-secondary dropdown-toggle line" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
       ${lineText}
     </button>
     `);
@@ -32,7 +33,12 @@ function displayPoem() {
     optionsDiv = $(`<div class="dropdown-menu">`);
     wordBag.forEach((word, index) => {
       if (word.unmatched) {
-        optionsDiv.append($(`<a class="dropdown-item">${word.word}</a>`));
+        const wordDropDown = $(`<a class="dropdown-item">${word.word}</a>`);
+        wordDropDown.click((e) => {
+          e.preventDefault();
+          handleWordSelect(word.word, correctWord, lineButton);
+        });
+        optionsDiv.append(wordDropDown);
       }
     });
     debugger;
@@ -78,39 +84,18 @@ function updatePoemDetails(currentPoem) {
   poemDetails.innerHTML = `<h3>${currentPoem.title} by ${currentPoem.author}</h3>`;
 }
 
-// was addDragAndDropListeners
-function handleDrop(e) {
-  const dragging = document.querySelector(".dragging");
-  if (!dragging) return;
-
-  const draggingWord = dragging.dataset.word;
-  const targetWord = e.dataset.word;
-
-  if (draggingWord !== targetWord) {
-    e.classList.add("incorrect");
-    e.dataset.correct = false;
+function handleWordSelect(selectedWord, correctWord, lineButton) {
+  debugger;
+  if (selectedWord !== correctWord) {
     movesLeft--;
-    setTimeout(() => {
-      e.classList.remove("incorrect");
-      e.classList.add("attempted");
-    }, 1000);
     updateProgressBar();
   } else {
-    e.classList.add("correct");
+    const lineText = lineButton[0].innerHTML;
     // fill in the completed line:
-    e.innerHTML = restoreSentence(e.innerHTML, dragging.innerHTML);
-    e.dataset.correct = true;
+    lineButton[0].innerHTML = restoreSentence(lineText, selectedWord);
+    lineButton.data.correct = true;
     numLinesCompleted++;
-    // keep the green outline for correct answers
-    setTimeout(() => {
-      e.classList.remove("incorrect");
-      e.classList.remove("attempted");
-      e.classList.remove("correct");
-      dragging.classList.add("completed");
-      e.classList.add("completed");
-    }, 1000);
   }
-
   checkCorrectCompletion();
 }
 
@@ -215,9 +200,8 @@ function handleTouchEnd(event) {
 
 function checkCorrectCompletion() {
   const poemDisplay = document.getElementById("poemDisplay");
-  const lines = document.querySelectorAll(".line-box");
+  const lines = document.querySelectorAll(".line");
   const progressBar = document.getElementById("progressBar");
-  const wordBoxen = document.querySelectorAll(".word-box");
 
   let correct = true;
   lines.forEach((line) => {
