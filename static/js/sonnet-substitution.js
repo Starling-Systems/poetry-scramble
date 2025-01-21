@@ -15,8 +15,8 @@ let currentPoem = {};
 let numLinesCompleted = 0;
 
 function displayPoem() {
-  const poemDisplay = document.getElementById("poemDisplay");
-  poemDisplay.innerHTML = ``;
+  const poemDisplay = $("#poemDisplay");
+  poemDisplay.innerHTML = "";
 
   let dropdownDiv = $(`<div class="dropdown">`);
   let optionsDiv;
