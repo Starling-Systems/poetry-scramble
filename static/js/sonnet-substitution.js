@@ -20,6 +20,7 @@ function displayPoem() {
 
   let dropdownDiv = $(`<div class="dropdown">`);
   let optionsDiv;
+  initWordBag(allLines.map((l) => l[1]));
   allLines.forEach((line, index) => {
     let lineText = line[0];
     let lineButton = $(`
@@ -33,7 +34,7 @@ function displayPoem() {
       `<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">`
     );
     wordBag.forEach((word, index) => {
-      if (word.matched) {
+      if (word.unmatched) {
         optionsDiv.append($(`<a class="dropdown-item">${word.word}</a>`));
       }
     });
@@ -71,7 +72,7 @@ async function loadRandomPoem() {
 
 let wordBag = [];
 function initWordBag(words) {
-  words.forEach((w) => wordBag.append({ word: w, matched: false }));
+  words.forEach((w) => wordBag.push({ word: w, unmatched: true }));
 }
 
 function updatePoemDetails(currentPoem) {
