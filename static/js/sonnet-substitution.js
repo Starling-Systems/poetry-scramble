@@ -16,7 +16,7 @@ let numLinesCompleted = 0;
 
 function displayPoem() {
   const poemDisplay = $("#poemDisplay");
-  poemDisplay.innerHTML = "";
+  poemDisplay.html("");
 
   let optionsDiv;
   initWordBag(allLines.map((l) => l[1]));
