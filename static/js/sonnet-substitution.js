@@ -41,7 +41,6 @@ function displayPoem() {
         optionsDiv.append(wordDropDown);
       }
     });
-    debugger;
     dropdownDiv.append(optionsDiv);
     poemDisplay.append(dropdownDiv);
   });
@@ -50,7 +49,6 @@ function displayPoem() {
 }
 
 async function loadRandomPoem() {
-  debugger;
   try {
     const response = await fetch("/sonnet_deworded");
     console.log("/sonnet_deworded response:");
@@ -85,7 +83,6 @@ function updatePoemDetails(currentPoem) {
 }
 
 function handleWordSelect(selectedWord, correctWord, lineButton) {
-  debugger;
   if (selectedWord !== correctWord) {
     movesLeft--;
     updateProgressBar();
