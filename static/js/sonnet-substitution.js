@@ -20,6 +20,7 @@ function displayPoem() {
 
   let optionsDiv;
   initWordBag(allLines.map((l) => l[1]));
+  shuffleArray(wordBag);  
   allLines.forEach((line, index) => {
     let dropdownDiv = $(`<div class="dropdown">`);
     let lineText = line[0];
