@@ -92,6 +92,8 @@ function handleWordSelect(selectedWord, correctWord, lineButton) {
     // fill in the completed line:
     lineButton[0].innerHTML = restoreSentence(lineText, selectedWord);
     lineButton.data.correct = true;
+    lineButton.removeClass("btn-secondary");
+    lineButton.addClass("btn-success");
     numLinesCompleted++;
   }
   checkCorrectCompletion();
