@@ -84,6 +84,7 @@ function updatePoemDetails(currentPoem) {
 }
 
 function handleWordSelect(selectedWord, correctWord, lineButton) {
+  debugger;
   if (selectedWord !== correctWord) {
     movesLeft--;
     updateProgressBar();
@@ -95,7 +96,7 @@ function handleWordSelect(selectedWord, correctWord, lineButton) {
     lineButton.removeClass("btn-secondary");
     lineButton.addClass("btn-success");
     numLinesCompleted++;
-    updateProgressBar()
+    updateProgressBar();
   }
   checkCorrectCompletion();
 }
