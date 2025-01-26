@@ -14,6 +14,10 @@ h1 {
   color: #333;
 }
 
+#poemDetails {
+  max-width: 400px;
+}
+
 .poem-display {
   margin: 20px 0;
   padding: 20px;
