@@ -62,7 +62,7 @@ h1 {
 .dropdown-toggle {
   white-space: nowrap;
   margin-top: 5px;
-  max-width: 350px;
+  width: fit-contentz;
   text-align: left;
 }
 
