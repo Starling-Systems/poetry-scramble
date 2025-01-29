@@ -13,6 +13,23 @@ let allLines = [];
 let movesLeft = 6;
 let currentPoem = {};
 let numLinesCompleted = 0;
+let wordsUsed = [];
+
+function makeOptionsDiv(correctWord, lineButton) {
+  debugger;
+  optionsDiv = $(`<div class="dropdown-menu">`);
+  wordBag.forEach((word, index) => {
+    let classStr = (word.unmatched)?"":"disabled";
+    const wordDropDown = $(`<a class="dropdown-item ${classStr}">${word.word}</a>`);
+      if (word.unmatched && wordsUsed) {
+        wordDropDown.click((e) => {
+        e.preventDefault();
+        handleWordSelect(word.word, correctWord, lineButton);
+      })};
+      optionsDiv.append(wordDropDown);
+    });
+  return optionsDiv;
+  }
 
 function displayPoem() {
   const poemDisplay = $("#poemDisplay");
@@ -31,17 +48,7 @@ function displayPoem() {
     </button>
     `);
     dropdownDiv.append(lineButton);
-    optionsDiv = $(`<div class="dropdown-menu">`);
-    wordBag.forEach((word, index) => {
-      if (word.unmatched) {
-        const wordDropDown = $(`<a class="dropdown-item">${word.word}</a>`);
-        wordDropDown.click((e) => {
-          e.preventDefault();
-          handleWordSelect(word.word, correctWord, lineButton);
-        });
-        optionsDiv.append(wordDropDown);
-      }
-    });
+    optionsDiv = makeOptionsDiv(correctWord, lineButton);
     dropdownDiv.append(optionsDiv);
     poemDisplay.append(dropdownDiv);
   });
@@ -78,6 +85,10 @@ function initWordBag(words) {
   words.forEach((w) => wordBag.push({ word: w, unmatched: true }));
 }
 
+function retrieveWordBag() {
+  return wordBag.filter((w) => {!wordsUsed.contains(w)});
+}
+
 function updatePoemDetails(currentPoem) {
   const poemDetails = document.getElementById("poemDetails");
   poemDetails.innerHTML = `<h3>${currentPoem.title} by ${currentPoem.author}</h3>`;
@@ -90,6 +101,7 @@ function handleWordSelect(selectedWord, correctWord, lineButton) {
     updateProgressBar();
   } else {
     const lineText = lineButton[0].innerHTML;
+    if (wordsUsed) {wordsUsed.append(selectedWord)};
     // fill in the completed line:
     lineButton[0].innerHTML = restoreSentence(lineText, selectedWord);
     lineButton.data.correct = true;
