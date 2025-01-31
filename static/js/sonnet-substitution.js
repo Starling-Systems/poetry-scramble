@@ -14,23 +14,41 @@ let movesLeft = 6;
 let currentPoem = {};
 let numLinesCompleted = 0;
 let wordsUsed = [];
+let wordBag = {};
+
+function initWordBag(words) {
+  words.forEach((w) => {
+    wordBag[w] = false;
+  });
+  return wordBag;
+}
+
+function getWordBagWords() {
+  return Object.keys(wordBag);
+}
+
+function updateWordBag(word) {
+  wordBag[word] = true;
+  return wordBag;
+}
+
+function isWordMatched(word) {
+  return wordBag[word];
+}
 
 function makeOptionsDiv(correctWord, lineButton) {
-  debugger;
   optionsDiv = $(`<div class="dropdown-menu">`);
-  wordBag.forEach((word, index) => {
-    debugger;
-    let classStr = word.unmatched ? "" : "disabled";
-    const wordDropDown = $(
-      `<a class="dropdown-item ${classStr}">${word.word}</a>`
-    );
-    if (word.unmatched && wordsUsed) {
-      wordDropDown.click((e) => {
+  getWordBagWords().forEach((word) => {
+    let classStr = isWordMatched(word) ? "disabled" : "";
+    const wordButton = $(`<a class="dropdown-item ${classStr}">${word}</a>`);
+    if (!isWordMatched(word)) {
+      // Make the word clickable if it hasn't been matched yet:
+      wordButton.click((e) => {
         e.preventDefault();
-        handleWordSelect(word.word, correctWord, lineButton);
+        handleWordSelect(word, correctWord, lineButton);
       });
     }
-    optionsDiv.append(wordDropDown);
+    optionsDiv.append(wordButton);
   });
   return optionsDiv;
 }
@@ -84,32 +102,18 @@ async function loadRandomPoem() {
   }
 }
 
-let wordBag = [];
-function initWordBag(words) {
-  words.forEach((w) => wordBag.push({ word: w, unmatched: true }));
-}
-
-function retrieveWordBag() {
-  return wordBag.filter((w) => {
-    !wordsUsed.contains(w);
-  });
-}
-
 function updatePoemDetails(currentPoem) {
   const poemDetails = document.getElementById("poemDetails");
   poemDetails.innerHTML = `<h3>${currentPoem.title} by ${currentPoem.author}</h3>`;
 }
 
 function handleWordSelect(selectedWord, correctWord, lineButton) {
-  debugger;
   if (selectedWord !== correctWord) {
     movesLeft--;
     updateProgressBar();
   } else {
     const lineText = lineButton[0].innerHTML;
-    if (wordsUsed) {
-      wordsUsed.push(selectedWord);
-    }
+    updateWordBag(correctWord);
     // fill in the completed line:
     lineButton[0].innerHTML = restoreSentence(lineText, selectedWord);
     lineButton.data.correct = true;
