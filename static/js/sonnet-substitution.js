@@ -36,11 +36,15 @@ function isWordMatched(word) {
   return wordBag[word];
 }
 
-function makeOptionsDiv(correctWord, lineButton) {
-  let optionsDiv = $(`<div class="dropdown-menu">`);
-  getWordBagWords().forEach((word) => {
+function makeOptionsDiv(correctWord, lineButton, index) {
+  let optionsDiv = $(
+    `<ul class="dropdown-menu" aria-labelledby="line-${index}">`
+  );
+  getWordBagWords().forEach((word, i) => {
     let classStr = isWordMatched(word) ? "disabled" : "";
-    const wordButton = $(`<a class="dropdown-item ${classStr}">${word}</a>`);
+    const wordButton = $(
+      `<li><a class="dropdown-item ${classStr}">${word}</a></li>`
+    );
     if (!isWordMatched(word)) {
       // Make the word clickable if it hasn't been matched yet:
       wordButton.click((e) => {
@@ -64,11 +68,11 @@ function displayPoem() {
     let lineText = line[0];
     let correctWord = line[1];
     let lineButton = $(`
-    <button class="btn btn-secondary dropdown-toggle line" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <button class="btn btn-secondary dropdown-toggle line" id="line-${index}" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
       ${lineText}
     </button>
     `);
-    lineButton.on("click", (e) => {
+    lineButton.on("show.bs.dropdown", (e) => {
       e.preventDefault();
       debugger;
       // dynamically render the word options by ...
@@ -77,12 +81,16 @@ function displayPoem() {
       // ... removing existing dropdown options:
       ddDiv.innerHTML = "";
       // ... creating a new div using the current state of wordBag:
-      let optionsDiv = makeOptionsDiv(correctWord, this);
+      let optionsDiv = makeOptionsDiv(correctWord, this, index);
       // ... and appending the dynamic list to the dropdown:
       ddDiv.append(optionsDiv);
     });
     dropdownDiv.append(lineButton);
     poemDisplay.append(dropdownDiv);
+    // ✅ Defer Bootstrap Dropdown Initialization to Next Event Loop Cycle
+    setTimeout(() => {
+      new bootstrap.Dropdown(lineButton);
+    }, 0);
   });
 
   updateProgressBar();
