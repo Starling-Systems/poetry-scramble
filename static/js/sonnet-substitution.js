@@ -19,17 +19,21 @@ function makeOptionsDiv(correctWord, lineButton) {
   debugger;
   optionsDiv = $(`<div class="dropdown-menu">`);
   wordBag.forEach((word, index) => {
-    let classStr = (word.unmatched)?"":"disabled";
-    const wordDropDown = $(`<a class="dropdown-item ${classStr}">${word.word}</a>`);
-      if (word.unmatched && wordsUsed) {
-        wordDropDown.click((e) => {
+    debugger;
+    let classStr = word.unmatched ? "" : "disabled";
+    const wordDropDown = $(
+      `<a class="dropdown-item ${classStr}">${word.word}</a>`
+    );
+    if (word.unmatched && wordsUsed) {
+      wordDropDown.click((e) => {
         e.preventDefault();
         handleWordSelect(word.word, correctWord, lineButton);
-      })};
-      optionsDiv.append(wordDropDown);
-    });
+      });
+    }
+    optionsDiv.append(wordDropDown);
+  });
   return optionsDiv;
-  }
+}
 
 function displayPoem() {
   const poemDisplay = $("#poemDisplay");
@@ -86,7 +90,9 @@ function initWordBag(words) {
 }
 
 function retrieveWordBag() {
-  return wordBag.filter((w) => {!wordsUsed.contains(w)});
+  return wordBag.filter((w) => {
+    !wordsUsed.contains(w);
+  });
 }
 
 function updatePoemDetails(currentPoem) {
@@ -101,7 +107,9 @@ function handleWordSelect(selectedWord, correctWord, lineButton) {
     updateProgressBar();
   } else {
     const lineText = lineButton[0].innerHTML;
-    if (wordsUsed) {wordsUsed.append(selectedWord)};
+    if (wordsUsed) {
+      wordsUsed.push(selectedWord);
+    }
     // fill in the completed line:
     lineButton[0].innerHTML = restoreSentence(lineText, selectedWord);
     lineButton.data.correct = true;
