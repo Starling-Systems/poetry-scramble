@@ -37,7 +37,7 @@ function isWordMatched(word) {
 }
 
 function makeOptionsDiv(correctWord, lineButton) {
-  optionsDiv = $(`<div class="dropdown-menu">`);
+  let optionsDiv = $(`<div class="dropdown-menu">`);
   getWordBagWords().forEach((word) => {
     let classStr = isWordMatched(word) ? "disabled" : "";
     const wordButton = $(`<a class="dropdown-item ${classStr}">${word}</a>`);
@@ -57,7 +57,6 @@ function displayPoem() {
   const poemDisplay = $("#poemDisplay");
   poemDisplay.html("");
 
-  let optionsDiv;
   initWordBag(allLines.map((l) => l[1]));
   shuffleArray(wordBag);
   allLines.forEach((line, index) => {
@@ -69,9 +68,20 @@ function displayPoem() {
       ${lineText}
     </button>
     `);
+    lineButton.on("click", (e) => {
+      e.preventDefault();
+      debugger;
+      // dynamically render the word options by ...
+      // ... binding the containing dropdown div in this scope:
+      let ddDiv = dropdownDiv;
+      // ... removing existing dropdown options:
+      ddDiv.innerHTML = "";
+      // ... creating a new div using the current state of wordBag:
+      let optionsDiv = makeOptionsDiv(correctWord, this);
+      // ... and appending the dynamic list to the dropdown:
+      ddDiv.append(optionsDiv);
+    });
     dropdownDiv.append(lineButton);
-    optionsDiv = makeOptionsDiv(correctWord, lineButton);
-    dropdownDiv.append(optionsDiv);
     poemDisplay.append(dropdownDiv);
   });
 
