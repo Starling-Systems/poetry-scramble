@@ -73,8 +73,6 @@ function displayPoem() {
     </button>
     `);
     lineButton.on("show.bs.dropdown", (e) => {
-      // dynamically render the word options by ...
-      // ... binding the containing dropdown div in this scope:
       let words = $(`#words-${index}`).find(".dropdown-item");
       [...words].forEach((wordElement) => {
         let w = wordElement.innerHTML;
@@ -87,10 +85,6 @@ function displayPoem() {
     dropdownDiv.append(lineButton);
     dropdownDiv.append(optionsDiv);
     poemDisplay.append(dropdownDiv);
-    // ✅ Defer Bootstrap Dropdown Initialization to Next Event Loop Cycle
-    setTimeout(() => {
-      new bootstrap.Dropdown(dropdownDiv);
-    }, 0);
   });
 
   updateProgressBar();
