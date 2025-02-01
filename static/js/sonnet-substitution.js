@@ -3,6 +3,7 @@ function shuffleArray(array) {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
   }
+  return array;
 }
 
 function restoreSentence(sentence, word) {
@@ -36,6 +37,18 @@ function isWordMatched(word) {
   return wordBag[word];
 }
 
+function shuffleWordBag() {
+  debugger;
+  let words = Object.keys(wordBag);
+  shuffleArray(words);
+  let wordHash = {};
+  words.forEach((w) => {
+    wordHash[w] = false;
+  });
+  wordBag = wordHash;
+  return wordBag;
+}
+
 function makeOptionsDiv(correctWord, lineButton, index) {
   let optionsDiv = $(
     `<ul class="dropdown-menu" id="words-${index}" aria-labelledby="line-${index}">`
@@ -62,7 +75,7 @@ function displayPoem() {
   poemDisplay.html("");
 
   initWordBag(allLines.map((l) => l[1]));
-  shuffleArray(wordBag);
+  shuffleWordBag();
   allLines.forEach((line, index) => {
     let dropdownDiv = $(`<div class="dropdown">`);
     let lineText = line[0];
