@@ -58,13 +58,10 @@ function makeOptionsDiv(correctWord, lineButton, index) {
     const wordButton = $(
       `<li><a class="dropdown-item ${classStr}">${word}</a></li>`
     );
-    if (!isWordMatched(word)) {
-      // Make the word clickable if it hasn't been matched yet:
-      wordButton.click((e) => {
-        e.preventDefault();
-        handleWordSelect(word, correctWord, lineButton);
-      });
-    }
+    wordButton.click((e) => {
+      e.preventDefault();
+      handleWordSelect(word, correctWord, lineButton);
+    });
     optionsDiv.append(wordButton);
   });
   return optionsDiv;
@@ -91,6 +88,7 @@ function displayPoem() {
         let w = wordElement.innerHTML;
         if (isWordMatched(w)) {
           $(wordElement).addClass("disabled");
+          $(wordElement).parent().off("click");
         }
       });
     });
