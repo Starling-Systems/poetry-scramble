@@ -38,7 +38,7 @@ function isWordMatched(word) {
 
 function makeOptionsDiv(correctWord, lineButton, index) {
   let optionsDiv = $(
-    `<ul class="dropdown-menu" aria-labelledby="line-${index}">`
+    `<ul class="dropdown-menu" id="words-${index}" aria-labelledby="line-${index}">`
   );
   getWordBagWords().forEach((word, i) => {
     let classStr = isWordMatched(word) ? "disabled" : "";
@@ -73,20 +73,19 @@ function displayPoem() {
     </button>
     `);
     lineButton.on("show.bs.dropdown", (e) => {
-      debugger;
       // dynamically render the word options by ...
       // ... binding the containing dropdown div in this scope:
-      let ddDiv = dropdownDiv;
-      // ... removing existing dropdown options:
-      ddDiv.innerHTML = "";
-      // ... creating a new div using the current state of wordBag:
-      let optionsDiv = makeOptionsDiv(correctWord, this, index);
-      // ... and appending the dynamic list to the dropdown:
-      ddDiv.append(optionsDiv);
+      let words = $(`#words-${index}`).find(".dropdown-item");
+      [...words].forEach((wordElement) => {
+        let w = wordElement.innerHTML;
+        if (isWordMatched(w)) {
+          $(wordElement).addClass("disabled");
+        }
+      });
     });
     let optionsDiv = makeOptionsDiv(correctWord, lineButton, index);
-    lineButton.append(optionsDiv);
     dropdownDiv.append(lineButton);
+    dropdownDiv.append(optionsDiv);
     poemDisplay.append(dropdownDiv);
     // ✅ Defer Bootstrap Dropdown Initialization to Next Event Loop Cycle
     setTimeout(() => {
