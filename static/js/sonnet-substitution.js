@@ -38,7 +38,7 @@ function isWordMatched(word) {
 }
 
 function shuffleWordBag() {
-  debugger;
+//  debugger;
   let words = Object.keys(wordBag);
   shuffleArray(words);
   let wordHash = {};
@@ -72,7 +72,7 @@ function displayPoem() {
   poemDisplay.html("");
 
   initWordBag(allLines.map((l) => l[1]));
-  shuffleWordBag();
+ // shuffleWordBag();
   allLines.forEach((line, index) => {
     let dropdownDiv = $(`<div class="dropdown">`);
     let lineText = line[0];
@@ -253,24 +253,42 @@ function checkCorrectCompletion() {
   const progressBar = document.getElementById("progressBar");
 
   let correct = true;
-  lines.forEach((line) => {
-    if (line.dataset.correct !== "true") {
+  Object.keys(wordBag).forEach((word) => {
+    if (!wordBag[word]) {
       correct = false;
     }
   });
-
   if (correct) {
     poemDisplay.classList.add("correct");
     setTimeout(() => {
       poemDisplay.classList.remove("correct");
-      displayPoem();
+      poemDisplay.innerHTML = shareSuccess(currentPoem);
     }, 1000);
   } else if (movesLeft <= 0) {
     progressBar.classList.add("out-of-moves");
     progressBar.innerHTML = "Out of Moves!";
-    poemDisplay.innerHTML = "Reload for another poem.";
+    poemDisplay.innerHTML = "<a href='/sonnet-substitution  '>Try another poem</a>";
     //    wordBoxen.forEach(e => removeDragListeners(e));
   }
+}
+
+async function writeClipboardText(text) {
+  console.log(`writing ${text.innerText()} to clipboard`);
+  try {
+    await navigator.clipboard.writeText(text.innerText());
+  } catch (error) {
+    console.error(error.message);
+  }
+}
+
+function shareSuccess(currentPoem) {
+  let lines = [`I just completed "${currentPoem.title}"`,
+    `by ${currentPoem.author}`,
+    `with ${movesLeft} moves to spare!`,
+    `http://poetryscramble.xyz/`];
+  let successDiv = $("div");
+  successDiv.addClass("col")
+  successDiv.appendChild($("div").addClass("row"))
 }
 
 function updateProgressBar() {
