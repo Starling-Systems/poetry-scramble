@@ -38,7 +38,7 @@ function isWordMatched(word) {
 }
 
 function shuffleWordBag() {
-//  debugger;
+  //  debugger;
   let words = Object.keys(wordBag);
   shuffleArray(words);
   let wordHash = {};
@@ -72,7 +72,7 @@ function displayPoem() {
   poemDisplay.html("");
 
   initWordBag(allLines.map((l) => l[1]));
- // shuffleWordBag();
+  // shuffleWordBag();
   allLines.forEach((line, index) => {
     let dropdownDiv = $(`<div class="dropdown">`);
     let lineText = line[0];
@@ -262,12 +262,13 @@ function checkCorrectCompletion() {
     poemDisplay.classList.add("correct");
     setTimeout(() => {
       poemDisplay.classList.remove("correct");
-      poemDisplay.innerHTML = shareSuccess(currentPoem);
+      shareSuccess(currentPoem);
     }, 1000);
   } else if (movesLeft <= 0) {
     progressBar.classList.add("out-of-moves");
     progressBar.innerHTML = "Out of Moves!";
-    poemDisplay.innerHTML = "<a href='/sonnet-substitution  '>Try another poem</a>";
+    poemDisplay.innerHTML =
+      "<a href='/sonnet-substitution  '>Try another poem</a>";
     //    wordBoxen.forEach(e => removeDragListeners(e));
   }
 }
@@ -282,13 +283,19 @@ async function writeClipboardText(text) {
 }
 
 function shareSuccess(currentPoem) {
-  let lines = [`I just completed "${currentPoem.title}"`,
+  let poemDisplay = $("#poemDisplay");
+  let lines = [
+    `I just completed "${currentPoem.title}"`,
     `by ${currentPoem.author}`,
     `with ${movesLeft} moves to spare!`,
-    `http://poetryscramble.xyz/`];
-  let successDiv = $("div");
-  successDiv.addClass("col")
-  successDiv.appendChild($("div").addClass("row"))
+    `http://poetryscramble.xyz/`,
+  ];
+  poemDisplay.html("");
+  let successDiv = $(`<div>`).attr("id", "success").addClass("col");
+  poemDisplay.append(successDiv);
+  lines.forEach((l) => {
+    $("#success").append($("<div>").addClass("row").html(l));
+  });
 }
 
 function updateProgressBar() {
