@@ -99,8 +99,9 @@ function makeOptionsList(correctWord, lineButton, lineIndex) {
   return optionsDiv;
 }
 
-function displayPoem(gameState) {
-  const poemDisplay = document.getElementById("poemDisplay");
+function displayPoem() {
+  const poemDisplay = $("#poemDisplay");
+  poemDisplay.html("");
 
   initWordBag(allLines.map((l) => l[1]));
   shuffleWordBag();
@@ -133,26 +134,12 @@ function displayPoem(gameState) {
     dropdownDiv.append(lineButton);
     dropdownDiv.append(optionsDiv);
     poemDisplay.append(dropdownDiv);
-    const lineBox = document.createElement("div");
-    lineBox.classList.add("line-box");
-    lineBox.textContent = line;
-    lineBox.dataset.index = index;
-    addDropListeners(lineBox);
-    if (gameState && gameState.completed_lines) {
-      let playerSolvedThisLine = gameState.completed_lines[index];
-      if (playerSolvedThisLine) {
-        let tc = lineBox.textContent;
-        tc = `(${playerSolvedThisLine}) ` + tc;
-        lineBox.textContent = tc;
-      }
-    }
-    poemDisplay.appendChild(lineBox);
   });
 
   updateProgressBar();
 }
 
-async function loadRandomPoem(gameState) {
+async function loadRandomPoem() {
   try {
     const response = await fetch("/sonnet_deworded");
     console.log("/sonnet_deworded response:");
@@ -206,6 +193,105 @@ function handleWordSelect(selectedWord, correctWord, lineButton, lineIndex) {
     updateProgressBar();
     checkCorrectCompletion();
   }
+}
+
+function addDropListeners(element) {
+  element.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    const dragging = document.querySelector(".dragging");
+    if (
+      dragging &&
+      e.target.classList.contains("line-box") &&
+      e.target !== dragging
+    ) {
+      e.target.classList.add("over");
+    }
+  });
+
+  element.addEventListener("dragleave", (e) => {
+    e.target.classList.remove("over");
+  });
+
+  element.addEventListener("drop", handleDrop);
+}
+
+function handleMove(e) {
+  e.target.classList.add("dragging");
+  e.dataTransfer.setData("text/plain", e.target.dataset.word);
+  e.dataTransfer.effectAllowed = "move";
+}
+
+function handleEnd(e) {
+  e.target.classList.remove("dragging");
+  document
+    .querySelectorAll(".line-box.over")
+    .forEach((el) => el.classList.remove("over"));
+}
+
+function addTouchListenersForWords(wordElement) {
+  wordElement.addEventListener("touchstart", handleTouchStart); // Touch drag start
+  wordElement.addEventListener("touchmove", handleTouchMove); // Touch drag move
+  wordElement.addEventListener("touchend", handleTouchEnd); // Touch drag end
+}
+
+function addDragListeners(element) {
+  element.addEventListener("dragstart", handleMove);
+  element.addEventListener("dragend", handleEnd);
+}
+
+function removeDragListeners(element) {
+  element.removeEventListener("dragstart");
+  element.removeEventListener("dragend");
+}
+
+let touchDraggedElement;
+// Touch handlers
+function handleTouchStart(event) {
+  touchDraggedElement = event.target;
+  touchDraggedElement.classList.add("dragging");
+  // Prevent touch scrolling on the start of a drag
+  event.preventDefault();
+}
+
+function handleTouchMove(event) {
+  if (!touchDraggedElement) return;
+
+  // Prevent touch scrolling during dragging
+  event.preventDefault();
+
+  const touch = event.touches[0];
+  const elementAtTouch = document.elementFromPoint(
+    touch.clientX,
+    touch.clientY
+  );
+
+  if (elementAtTouch && elementAtTouch.classList.contains("line")) {
+    elementAtTouch.classList.add("over");
+  } else {
+    document
+      .querySelectorAll(".line.over")
+      .forEach((el) => el.classList.remove("over"));
+  }
+}
+
+function handleTouchEnd(event) {
+  event.preventDefault();
+  if (!touchDraggedElement) return;
+
+  const touch = event.changedTouches[0];
+  const elementAtTouch = document.elementFromPoint(
+    touch.clientX,
+    touch.clientY
+  );
+
+  if (elementAtTouch && elementAtTouch.classList.contains("line-box")) {
+    elementAtTouch.classList.remove("over");
+    handleDrop(elementAtTouch);
+  }
+
+  touchDraggedElement.classList.remove("dragging");
+  touchDraggedElement = null;
 }
 
 function checkCorrectCompletion() {
