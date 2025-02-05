@@ -14,6 +14,10 @@ h1 {
   color: #333;
 }
 
+#poemDetails {
+  max-width: 400px;
+}
+
 .poem-display {
   margin: 20px 0;
   padding: 20px;
@@ -22,10 +26,9 @@ h1 {
   background-color: #fff;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: left;
   transition: border 0.3s ease-in-out;
   user-select: none;
-  max-width: 350px;
 }
 
 .line-box {
@@ -54,6 +57,13 @@ h1 {
   right: 20px; /* Adjust based on your layout */
   z-index: 1000; /* Ensure it stays above other elements */
   top: 50px;
+}
+
+.dropdown-toggle {
+  white-space: nowrap;
+  margin-top: 5px;
+  width: fit-content;
+  text-align: left;
 }
 
 .word-box {
