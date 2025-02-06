@@ -53,7 +53,7 @@ def get_random_sonnet():
         return jsonify({"error": str(e)}), 500
 
 @app.route('/get_sonnet', methods=['GET'])
-def get_sonnet(sonnet_num):
+def get_sonnet():
     sonnet_num = request.args.get('sonnet_num', default = 0, type = int)
     try:
         sonnet = poetry.get_sonnet_json(sonnet_num)
