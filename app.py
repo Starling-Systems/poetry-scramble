@@ -52,6 +52,17 @@ def get_random_sonnet():
     except requests.exceptions.RequestException as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route('/get_sonnet', methods=['GET'])
+def get_sonnet(sonnet_num):
+    sonnet_num = request.args.get('sonnet_num', default = 0, type = int)
+    try:
+        sonnet = poetry.get_sonnet_json(sonnet_num)
+        if not sonnet:
+            return jsonify({"error": "sonnet number " + sonnet_num + " not found."}), 500
+        else:
+            return sonnet, 200
+    except requests.exceptions.RequestException as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route("/sonnet_deworded", methods = ["GET"])
 def get_deworded_sonnet():
