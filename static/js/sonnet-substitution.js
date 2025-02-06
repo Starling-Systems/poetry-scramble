@@ -19,7 +19,10 @@ let wordBag = {};
 
 function initWordBag(words) {
   words.forEach((w) => {
-    wordBag[w] = false;
+    [
+      "word" = w,
+      "used" = false
+    ];
   });
   return wordBag;
 }
@@ -33,8 +36,12 @@ function updateWordBag(word) {
   return wordBag;
 }
 
-function isWordMatched(word) {
-  return wordBag[word];
+function isWordMatched(word, index) {
+  if (wordBag[word].contains(index)) {
+    wordBag[word].filter(i => i != index);
+    return false;
+  }
+  return true;
 }
 
 function shuffleWordBag() {
@@ -72,7 +79,7 @@ function displayPoem() {
   poemDisplay.html("");
 
   initWordBag(allLines.map((l) => l[1]));
-  shuffleWordBag();
+//  shuffleWordBag();
   allLines.forEach((line, index) => {
     let dropdownDiv = $(`<div class="dropdown">`);
     let lineText = line[0];
@@ -84,9 +91,9 @@ function displayPoem() {
     `);
     lineButton.on("show.bs.dropdown", (e) => {
       let words = $(`#words-${index}`).find(".dropdown-item");
-      [...words].forEach((wordElement) => {
+      [...words].forEach((wordElement, i) => {
         let w = wordElement.innerHTML;
-        if (isWordMatched(w)) {
+        if (isWordMatched(w, i)) {
           $(wordElement).addClass("disabled");
           $(wordElement).parent().off("click");
         }
