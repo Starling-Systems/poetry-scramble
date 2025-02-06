@@ -2,6 +2,8 @@ import requests
 import string
 import random
 
+NUM_SONNETS = 158
+
 def get_all_sonnets_json():
     """Retrieve all the sonnets"""
     sonnets_response = requests.get("https://ajpj.fact50.net/PoetryScramble/ShakespeareSonnets.json")
