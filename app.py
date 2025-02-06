@@ -9,7 +9,7 @@ import poetry
 
 
 app = Flask(__name__, static_folder='static')
-socketio = SocketIO(app)
+socketio = SocketIO(app, cors_allowed_origins="*") # allow WebSockets
 
 @app.route('/')
 def home():
