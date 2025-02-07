@@ -19,10 +19,10 @@ let wordBag = {};
 
 function initWordBag(words) {
   words.forEach((w) => {
-    [
-      "word" = w,
-      "used" = false
-    ];
+    {
+      word : w,
+      used : false
+    };
   });
   return wordBag;
 }
