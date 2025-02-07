@@ -18,11 +18,13 @@ let wordsUsed = [];
 let wordBag = {};
 
 function initWordBag(words) {
-  words.forEach((w) => {
-    {
-      word : w,
-      used : false
-    };
+  words.forEach((w, i) => {
+    if (wordBag[w]) {
+      let positions = wordBag[w];
+      wordBag[w] = positions.append(i);
+    } else {
+      wordBag[w] = [i];
+    }
   });
   return wordBag;
 }
@@ -31,14 +33,22 @@ function getWordBagWords() {
   return Object.keys(wordBag);
 }
 
-function updateWordBag(word) {
-  wordBag[word] = true;
-  return wordBag;
+function markWordUsed(word, lineIndex) {
+  let positions = wordBag[word];
+  // if this is the correct word choice at position index ...
+  if (positions.includes(lineIndex)) {
+    // then remove this index from the remaining choices for this word:
+    positions.filter((i) => i != lineIndex);
+  }
+  wordBag[word] = positions;
 }
 
 function isWordMatched(word, index) {
-  if (wordBag[word].contains(index)) {
-    wordBag[word].filter(i => i != index);
+  let positions = wordBag[word];
+  // if this is the correct word choice at position index ...
+  if (positions.includes(index)) {
+    // then remove this index from the remaining choices for this word:
+    wordBag[word].filter((i) => i != index);
     return false;
   }
   return true;
@@ -56,9 +66,9 @@ function shuffleWordBag() {
   return wordBag;
 }
 
-function makeOptionsDiv(correctWord, lineButton, index) {
+function makeOptionsDiv(correctWord, lineButton, lineIndex) {
   let optionsDiv = $(
-    `<ul class="dropdown-menu" id="words-${index}" aria-labelledby="line-${index}">`
+    `<ul class="dropdown-menu" id="words-${lineIndex}" aria-labelledby="line-${lineIndex}">`
   );
   getWordBagWords().forEach((word, i) => {
     let classStr = isWordMatched(word) ? "disabled" : "";
@@ -67,7 +77,7 @@ function makeOptionsDiv(correctWord, lineButton, index) {
     );
     wordButton.click((e) => {
       e.preventDefault();
-      handleWordSelect(word, correctWord, lineButton);
+      handleWordSelect(word, correctWord, lineButton, lineIndex);
     });
     optionsDiv.append(wordButton);
   });
@@ -79,7 +89,7 @@ function displayPoem() {
   poemDisplay.html("");
 
   initWordBag(allLines.map((l) => l[1]));
-//  shuffleWordBag();
+  //  shuffleWordBag();
   allLines.forEach((line, index) => {
     let dropdownDiv = $(`<div class="dropdown">`);
     let lineText = line[0];
@@ -137,13 +147,13 @@ function updatePoemDetails(currentPoem) {
   poemDetails.innerHTML = `<h3>${currentPoem.title} by ${currentPoem.author}</h3>`;
 }
 
-function handleWordSelect(selectedWord, correctWord, lineButton) {
+function handleWordSelect(selectedWord, correctWord, lineButton, lineIndex) {
   if (selectedWord !== correctWord) {
     movesLeft--;
     updateProgressBar();
   } else {
     const lineText = lineButton[0].innerHTML;
-    updateWordBag(correctWord);
+    markWordUsed(correctWord, lineIndex);
     // fill in the completed line:
     lineButton[0].innerHTML = restoreSentence(lineText, selectedWord);
     lineButton.data.correct = true;
