@@ -21,7 +21,7 @@ function initWordBag(words) {
   words.forEach((w, i) => {
     if (wordBag[w]) {
       let positions = wordBag[w];
-      wordBag[w] = positions.append(i);
+      wordBag[w] = positions.push(i);
     } else {
       wordBag[w] = [i];
     }
