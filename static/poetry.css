@@ -10,6 +10,21 @@ body {
   background-color: #f4f4f9;
 }
 
+.game-area {
+  margin-top: 20px;
+  text-align: center;
+}
+.line {
+  margin: 5px;
+  padding: 10px;
+  border: 1px dashed #ccc;
+  border-radius: 5px;
+  cursor: grab;
+}
+.player-info {
+  margin-bottom: 20px;
+}
+
 h1 {
   color: #333;
 }
