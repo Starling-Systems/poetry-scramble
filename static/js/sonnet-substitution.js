@@ -16,6 +16,7 @@ let currentPoem = {};
 let numLinesCompleted = 0;
 let wordsUsed = [];
 let wordBag = {};
+let orderedLastWords = [];
 
 function initWordBag(words) {
   words.forEach((w, i) => {
@@ -33,7 +34,7 @@ function getWordBagWords() {
   return Object.keys(wordBag);
 }
 
-function markWordUsed(word, lineIndex) {
+function markWordMatched(word, lineIndex) {
   let positions = wordBag[word];
   // if this is the correct word choice at position index ...
   if (Array.isArray(positions) && positions.includes(lineIndex)) {
@@ -43,13 +44,26 @@ function markWordUsed(word, lineIndex) {
   wordBag[word] = positions;
 }
 
+function getWordPositions(word) {
+  debugger;
+  let wordPositions = [];
+  orderedLastWords.forEach((w, i) => {
+    if (w == word) {
+      wordPositions.push(i);
+    }
+  });
+  return wordPositions;
+}
+
 function isWordMatched(word, lineIndex) {
-  let positions = wordBag[word];
-  // if this is the correct word choice at position index ...
-  if (!positions.includes(lineIndex)) {
-    return true;
+  // if word appears on this line:
+  if (getWordPositions(word).indexOf(lineIndex) >= 0) {
+    // then check if this line has been matched yet:
+    let remainingPositions = wordBag[word];
+    return !remainingPositions.includes(lineIndex);
+  } else {
+    return false;
   }
-  return false;
 }
 
 function shuffleWordBag() {
@@ -64,7 +78,8 @@ function shuffleWordBag() {
   return wordBag;
 }
 
-function makeOptionsDiv(correctWord, lineButton, lineIndex) {
+function makeOptionsList(correctWord, lineButton, lineIndex) {
+  debugger;
   let optionsDiv = $(
     `<ul class="dropdown-menu" id="words-${lineIndex}" aria-labelledby="line-${lineIndex}">`
   );
@@ -95,14 +110,14 @@ function displayPoem() {
       ${lineText}
     </button>
     `);
-    let optionsDiv = makeOptionsDiv(correctWord, lineButton, lineIndex);
+    let optionsDiv = makeOptionsList(correctWord, lineButton, lineIndex);
     dropdownDiv.on("show.bs.dropdown", (e) => {
       debugger;
       setTimeout(() => {
         // remove the existing word options in the DOM:
         dropdownDiv.find(`#words-${lineIndex}`).remove();
         // add the new word options with current matches grayed:
-        let optionsDiv = makeOptionsDiv(correctWord, lineButton, lineIndex);
+        let optionsDiv = makeOptionsList(correctWord, lineButton, lineIndex);
         dropdownDiv.append(optionsDiv);
         // ✅ Toggle the .show class on the dropdown-menu (UL)
         dropdownDiv.find(".dropdown-menu").addClass("show");
@@ -155,7 +170,7 @@ function handleWordSelect(selectedWord, correctWord, lineButton, lineIndex) {
     updateProgressBar();
   } else {
     const lineText = lineButton[0].innerHTML;
-    markWordUsed(correctWord, lineIndex);
+    markWordMatched(correctWord, lineIndex);
     // fill in the completed line:
     lineButton[0].innerHTML = restoreSentence(lineText, selectedWord);
     lineButton.data.correct = true;
