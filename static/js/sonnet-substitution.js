@@ -132,7 +132,11 @@ function updatePoemDetails(currentPoem) {
 
 function handleWordSelect(selectedWord, correctWord, lineButton) {
   if (selectedWord !== correctWord) {
+    poemDisplay.classList.add("incorrect");
     movesLeft--;
+    setTimeout(() => {
+      poemDisplay.classList.remove("incorrect");
+    }, 1000);
     updateProgressBar();
   } else {
     const lineText = lineButton[0].innerHTML;
