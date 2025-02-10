@@ -46,12 +46,10 @@ function markWordUsed(word, lineIndex) {
 function isWordMatched(word, lineIndex) {
   let positions = wordBag[word];
   // if this is the correct word choice at position index ...
-  if (positions.includes(lineIndex)) {
-    // then remove this index from the remaining choices for this word:
-    wordBag[word].filter((i) => i != lineIndex);
-    return false;
+  if (!positions.includes(lineIndex)) {
+    return true;
   }
-  return true;
+  return false;
 }
 
 function shuffleWordBag() {
@@ -88,26 +86,32 @@ function displayPoem() {
   const poemDisplay = $("#poemDisplay");
   poemDisplay.html("");
   //  shuffleWordBag();
-  allLines.forEach((line, index) => {
+  allLines.forEach((line, lineIndex) => {
     let dropdownDiv = $(`<div class="dropdown">`);
     let lineText = line[0];
     let correctWord = line[1];
     let lineButton = $(`
-    <button class="btn btn-secondary dropdown-toggle line" id="line-${index}" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <button class="btn btn-secondary dropdown-toggle line" id="line-${lineIndex}" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
       ${lineText}
     </button>
     `);
-    lineButton.on("show.bs.dropdown", (e) => {
-      let words = $(`#words-${index}`).find(".dropdown-item");
-      [...words].forEach((wordElement, lineIndex) => {
-        let w = wordElement.innerHTML;
-        if (isWordMatched(w, lineIndex)) {
-          $(wordElement).addClass("disabled");
-          $(wordElement).parent().off("click");
-        }
-      });
+    let optionsDiv = makeOptionsDiv(correctWord, lineButton, lineIndex);
+    dropdownDiv.on("show.bs.dropdown", (e) => {
+      debugger;
+      setTimeout(() => {
+        // remove the existing word options in the DOM:
+        dropdownDiv.find(`#words-${lineIndex}`).remove();
+        // add the new word options with current matches grayed:
+        let optionsDiv = makeOptionsDiv(correctWord, lineButton, lineIndex);
+        dropdownDiv.append(optionsDiv);
+        // ✅ Toggle the .show class on the dropdown-menu (UL)
+        dropdownDiv.find(".dropdown-menu").addClass("show");
+      }, 0); // Allow Bootstrap dropdown to finish before modifying the DOM
     });
-    let optionsDiv = makeOptionsDiv(correctWord, lineButton, index);
+    // Ensure hiding the dropdown removes .show from <ul>
+    dropdownDiv.on("hide.bs.dropdown", (e) => {
+      dropdownDiv.find(".dropdown-menu").removeClass("show");
+    });
     dropdownDiv.append(lineButton);
     dropdownDiv.append(optionsDiv);
     poemDisplay.append(dropdownDiv);
