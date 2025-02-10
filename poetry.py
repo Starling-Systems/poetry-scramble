@@ -14,6 +14,8 @@ def get_last_word(l: str) -> list :
     """returns deworded string and the missing word"""
     words = l.split(" ")
     lastword = words[-1]
+    print("words = ")
+    print(words)
     if lastword[-1] in string.punctuation:
         lastpunct = lastword[-1]
         lastword = lastword[:-1]

@@ -36,19 +36,19 @@ function getWordBagWords() {
 function markWordUsed(word, lineIndex) {
   let positions = wordBag[word];
   // if this is the correct word choice at position index ...
-  if (positions.includes(lineIndex)) {
+  if (Array.isArray(positions) && positions.includes(lineIndex)) {
     // then remove this index from the remaining choices for this word:
     positions.filter((i) => i != lineIndex);
   }
   wordBag[word] = positions;
 }
 
-function isWordMatched(word, index) {
+function isWordMatched(word, lineIndex) {
   let positions = wordBag[word];
   // if this is the correct word choice at position index ...
-  if (positions.includes(index)) {
+  if (positions.includes(lineIndex)) {
     // then remove this index from the remaining choices for this word:
-    wordBag[word].filter((i) => i != index);
+    wordBag[word].filter((i) => i != lineIndex);
     return false;
   }
   return true;
@@ -70,8 +70,8 @@ function makeOptionsDiv(correctWord, lineButton, lineIndex) {
   let optionsDiv = $(
     `<ul class="dropdown-menu" id="words-${lineIndex}" aria-labelledby="line-${lineIndex}">`
   );
-  getWordBagWords().forEach((word, i) => {
-    let classStr = isWordMatched(word) ? "disabled" : "";
+  getWordBagWords().forEach((word) => {
+    let classStr = isWordMatched(word, lineIndex) ? "disabled" : "";
     const wordButton = $(
       `<li><a class="dropdown-item ${classStr}">${word}</a></li>`
     );
@@ -87,8 +87,6 @@ function makeOptionsDiv(correctWord, lineButton, lineIndex) {
 function displayPoem() {
   const poemDisplay = $("#poemDisplay");
   poemDisplay.html("");
-
-  initWordBag(allLines.map((l) => l[1]));
   //  shuffleWordBag();
   allLines.forEach((line, index) => {
     let dropdownDiv = $(`<div class="dropdown">`);
@@ -101,9 +99,9 @@ function displayPoem() {
     `);
     lineButton.on("show.bs.dropdown", (e) => {
       let words = $(`#words-${index}`).find(".dropdown-item");
-      [...words].forEach((wordElement, i) => {
+      [...words].forEach((wordElement, lineIndex) => {
         let w = wordElement.innerHTML;
-        if (isWordMatched(w, i)) {
+        if (isWordMatched(w, lineIndex)) {
           $(wordElement).addClass("disabled");
           $(wordElement).parent().off("click");
         }
@@ -132,8 +130,8 @@ async function loadRandomPoem() {
     currentIndex = 0;
     numLinesCompleted = 0;
     movesLeft = 6;
-    displayPoem();
     initWordBag(orderedLastWords);
+    displayPoem();
     updateProgressBar();
     updatePoemDetails(currentPoem);
   } catch (error) {
