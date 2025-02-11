@@ -59,23 +59,23 @@ function hasRemainingMatches(word) {
   return remainingWordPositions.length > 0;
 }
 
-function isWordMatched(word, lineIndex) {
+function isWordMatched(word, wordIndex) {
   // if word appears on this line:
-  if (getWordPositions(word).indexOf(lineIndex) >= 0) {
+  if (getWordPositions(word).indexOf(wordIndex) >= 0) {
     // then check if this line has been matched yet:
     let remainingPositions = wordBag[word];
-    return !remainingPositions.includes(lineIndex);
+    return !remainingPositions.includes(wordIndex);
   } else {
     return false;
   }
 }
 
 function shuffleWordBag() {
-  let words = Object.keys(wordBag);
+  let words = orderedLastWords;
   shuffleArray(words);
   let wordHash = {};
   words.forEach((w) => {
-    wordHash[w] = false;
+    wordHash[w] = getWordPositions(w);
   });
   wordBag = wordHash;
   return wordBag;
