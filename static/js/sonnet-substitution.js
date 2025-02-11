@@ -39,7 +39,7 @@ function markWordMatched(word, lineIndex) {
   // if this is the correct word choice at position index ...
   if (Array.isArray(positions) && positions.includes(lineIndex)) {
     // then remove this index from the remaining choices for this word:
-    positions.filter((i) => i != lineIndex);
+    positions = positions.filter((i) => i != lineIndex);
   }
   wordBag[word] = positions;
 }
@@ -61,6 +61,7 @@ function hasRemainingMatches(word) {
 }
 
 function isWordMatched(word, lineIndex) {
+  debugger;
   // if word appears on this line:
   if (getWordPositions(word).indexOf(lineIndex) >= 0) {
     // then check if this line has been matched yet:
@@ -88,8 +89,8 @@ function makeOptionsList(correctWord, lineButton, lineIndex) {
   let optionsDiv = $(
     `<ul class="dropdown-menu" id="words-${lineIndex}" aria-labelledby="line-${lineIndex}">`
   );
-  getWordBagWords().forEach((word) => {
-    let classStr = isWordMatched(word, lineIndex) ? "disabled" : "";
+  orderedLastWords.forEach((word, wordIndex) => {
+    let classStr = isWordMatched(word, wordIndex) ? "disabled" : "";
     const wordButton = $(
       `<li><a class="dropdown-item ${classStr}">${word}</a></li>`
     );
