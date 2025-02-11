@@ -55,6 +55,11 @@ function getWordPositions(word) {
   return wordPositions;
 }
 
+function hasRemainingMatches(word) {
+  let remainingWordPositions = wordBag[word];
+  return remainingWordPositions.length > 0;
+}
+
 function isWordMatched(word, lineIndex) {
   // if word appears on this line:
   if (getWordPositions(word).indexOf(lineIndex) >= 0) {
@@ -169,8 +174,13 @@ function handleWordSelect(selectedWord, correctWord, lineButton, lineIndex) {
     movesLeft--;
     updateProgressBar();
   } else {
+    const poemDisplay = document.getElementById("poemDisplay");
     const lineText = lineButton[0].innerHTML;
     markWordMatched(correctWord, lineIndex);
+    poemDisplay.classList.add("correct");
+    setTimeout(() => {
+      poemDisplay.classList.remove("correct");
+    }, 1000);
     // fill in the completed line:
     lineButton[0].innerHTML = restoreSentence(lineText, selectedWord);
     lineButton.data.correct = true;
@@ -178,21 +188,21 @@ function handleWordSelect(selectedWord, correctWord, lineButton, lineIndex) {
     lineButton.addClass("btn-success");
     numLinesCompleted++;
     updateProgressBar();
+    checkCorrectCompletion();
   }
-  checkCorrectCompletion();
 }
 
 function checkCorrectCompletion() {
   const poemDisplay = document.getElementById("poemDisplay");
-  const lines = document.querySelectorAll(".line");
   const progressBar = document.getElementById("progressBar");
 
   let correct = true;
-  Object.keys(wordBag).forEach((word) => {
-    if (!wordBag[word]) {
+  getWordBagWords().forEach((word) => {
+    if (hasRemainingMatches(word)) {
       correct = false;
     }
   });
+
   if (correct) {
     poemDisplay.classList.add("correct");
     setTimeout(() => {
