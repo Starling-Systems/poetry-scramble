@@ -45,7 +45,6 @@ function markWordMatched(word, lineIndex) {
 }
 
 function getWordPositions(word) {
-  debugger;
   let wordPositions = [];
   orderedLastWords.forEach((w, i) => {
     if (w == word) {
@@ -61,7 +60,6 @@ function hasRemainingMatches(word) {
 }
 
 function isWordMatched(word, lineIndex) {
-  debugger;
   // if word appears on this line:
   if (getWordPositions(word).indexOf(lineIndex) >= 0) {
     // then check if this line has been matched yet:
@@ -73,7 +71,6 @@ function isWordMatched(word, lineIndex) {
 }
 
 function shuffleWordBag() {
-  //  debugger;
   let words = Object.keys(wordBag);
   shuffleArray(words);
   let wordHash = {};
@@ -85,7 +82,6 @@ function shuffleWordBag() {
 }
 
 function makeOptionsList(correctWord, lineButton, lineIndex) {
-  debugger;
   let optionsDiv = $(
     `<ul class="dropdown-menu" id="words-${lineIndex}" aria-labelledby="line-${lineIndex}">`
   );
@@ -106,7 +102,7 @@ function makeOptionsList(correctWord, lineButton, lineIndex) {
 function displayPoem() {
   const poemDisplay = $("#poemDisplay");
   poemDisplay.html("");
-  //  shuffleWordBag();
+  shuffleWordBag();
   allLines.forEach((line, lineIndex) => {
     let dropdownDiv = $(`<div class="dropdown">`);
     let lineText = line[0];
