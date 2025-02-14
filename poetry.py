@@ -11,7 +11,7 @@ def get_random_sonnet_json():
     sonnet = random.choice(sonnets)
     return sonnet
 
-def depunctWord(word:str) -> tuple:
+def depunctuate_word(word:str) -> tuple:
     """strips starting and ending punctuation from a string, 
 
     returns ((startingpunct, stripedstring, endingpunct)
@@ -38,7 +38,7 @@ def get_last_word(l: str) -> list :
     """returns deworded string and the missing word"""
     words = l.split(" ")
     lastword = words[-1]
-    lastwordclean = depunctWord(lastword)
+    lastwordclean = depunctuate_word(lastword)
     wordstrimmed = " ".join(words[:-1] + [lastwordclean[0] + "___" + lastwordclean[-1]])
     lastword = lastwordclean[1]
     return [wordstrimmed, lastword]
