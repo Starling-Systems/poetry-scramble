@@ -19,7 +19,7 @@ def home():
 def sonnet():
     return send_from_directory(app.static_folder, 'sonnet.html')
 
-@app.route('/sonnet-substitution')
+@app.route('/sonnet-substitution', methods=['GET'])
 def sonnet_substitution():
     return send_from_directory(app.static_folder, 'sonnet-substitution.html')
 
@@ -54,13 +54,15 @@ def get_random_sonnet():
 
 @app.route('/get_sonnet', methods=['GET'])
 def get_sonnet():
-    sonnet_num = request.args.get('sonnet_num', default = 0, type = int)
+    sonnet_num = request.args.get('id', default = 0, type = int)
     try:
-        sonnet = poetry.get_sonnet_json(sonnet_num)
-        if not sonnet:
+        sonnetJSON = poetry.get_sonnet_json(sonnet_num)
+        print(sonnetJSON)
+        if not sonnetJSON['lines']:
             return jsonify({"error": "sonnet number " + sonnet_num + " not found."}), 500
         else:
-            return sonnet, 200
+            sonnetJSON["lines"] = [poetry.get_last_word(line) for line in sonnetJSON["lines"]]
+            return sonnetJSON, 200
     except requests.exceptions.RequestException as e:
         return jsonify({"error": str(e)}), 500
 
