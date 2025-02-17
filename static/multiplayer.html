@@ -2,20 +2,6 @@
 <html lang="en">
   <head>
     <!-- Google tag (gtag.js) -->
-    <script
-      async
-      src="https://www.googletagmanager.com/gtag/js?id=G-906765D24Y"
-    ></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag("js", new Date());
-
-      gtag("config", "G-906765D24Y");
-    </script>
-
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sonnet Substitution</title>
@@ -46,11 +32,44 @@
       async
       src="https://www.googletagmanager.com/gtag/js?id=G-906765D24Y"
     ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "G-906765D24Y");
+    </script>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+      }
+      .game-area {
+        margin-top: 20px;
+        text-align: center;
+      }
+      .line {
+        margin: 5px;
+        padding: 10px;
+        border: 1px dashed #ccc;
+        border-radius: 5px;
+        cursor: grab;
+      }
+      .player-info {
+        margin-bottom: 20px;
+      }
+    </style>
   </head>
-
   <body>
-    <h1>Sonnet Substitution</h1>
-
+    <h1>Sonnet Shuffle Multiplayer</h1>
     <div class="player-info">
       <label for="playerName">Your Name:</label>
       <input type="text" id="playerName" placeholder="Enter your name" />
@@ -61,26 +80,9 @@
       <div id="lines"></div>
       <h3>Players:</h3>
       <ul id="players"></ul>
-      <button onclick="invite()">Copy invite</button>
-    </div>
-
-    <div id="poemDetails"></div>
-    <div class="progress-bar" id="progressBar">
-      Lines Completed Correctly: 0/0
-    </div>
-    <div class="instructions">
-      Choose the missing words to complete the sonnet.<br />
-      Reload to get a new poem.
-    </div>
-
-    <div class="row align-items-start">
-      <div class="col">
-        <div id="poemDisplay" class="poem-display">Loading poem...</div>
-      </div>
     </div>
 
     <script src="https://cdn.socket.io/4.3.2/socket.io.min.js"></script>
-    <script src="/static/js/sonnet-substitution.js"></script>
     <script src="/static/js/multiplayer.js"></script>
   </body>
 </html>

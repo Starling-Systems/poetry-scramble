@@ -1,11 +1,15 @@
 from flask import Flask, jsonify, request, send_from_directory
+from flask_socketio import SocketIO, join_room, emit
 import os
 import json
 import random
 import requests
 import poetry
 
+
+
 app = Flask(__name__, static_folder='static')
+socketio = SocketIO(app, cors_allowed_origins="*") # allow WebSockets
 
 @app.route('/')
 def home():
@@ -19,6 +23,9 @@ def sonnet():
 def sonnet_substitution():
     return send_from_directory(app.static_folder, 'sonnet-substitution.html')
 
+@app.route('/multiplayer')
+def multiplayer():
+    return send_from_directory(app.static_folder, 'multiplayer.html')
 
 @app.route('/poem/<int:poem_id>', methods=['GET'])
 def get_poem(poem_id):
@@ -45,6 +52,17 @@ def get_random_sonnet():
     except requests.exceptions.RequestException as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route('/get_sonnet', methods=['GET'])
+def get_sonnet():
+    sonnet_num = request.args.get('sonnet_num', default = 0, type = int)
+    try:
+        sonnet = poetry.get_sonnet_json(sonnet_num)
+        if not sonnet:
+            return jsonify({"error": "sonnet number " + sonnet_num + " not found."}), 500
+        else:
+            return sonnet, 200
+    except requests.exceptions.RequestException as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route("/sonnet_deworded", methods = ["GET"])
 def get_deworded_sonnet():
@@ -94,6 +112,34 @@ def get_random_poem():
     except requests.exceptions.RequestException as e:
         return jsonify({"error": str(e)}), 500
 
+# Store game states for rooms
+game_states = {}
+
+@socketio.on('join')
+def on_join(data):
+    room = data['room']
+    player = data['player']
+    join_room(room)
+    if room not in game_states:
+        game_states[room] = {'completed_lines': {}, 'players': []}
+    if player not in game_states[room]['players']:
+        game_states[room]['players'].append(player)
+    print("join, update: game_states:")
+    print(game_states)
+    emit('update', game_states[room], room=room)
+
+@socketio.on('complete_line')
+def complete_line(data):
+    room = data['room']
+    line_index = data['line_index']
+    player = data['player']
+    # Update game state
+    game_states[room]['completed_lines'][line_index] = player
+    print("complete_line, update: game_states:")
+    print(game_states)
+    emit('update', game_states[room], room=room)
+
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))  # Use PORT from environment or default to 5000
-    app.run(host='0.0.0.0', port=port, debug=True)
+    socketio.run(app, host='0.0.0.0', port=port, debug=True)
