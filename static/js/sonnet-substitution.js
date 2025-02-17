@@ -19,14 +19,20 @@ let wordBag = {};
 let orderedLastWords = [];
 
 function initWordBag(words) {
-  words.forEach((w, i) => {
-    if (wordBag[w]) {
-      let positions = wordBag[w];
-      wordBag[w] = positions.push(i);
-    } else {
-      wordBag[w] = [i];
-    }
+  words.forEach((w) => {
+    wordBag[w] = getWordPositions(w);
   });
+  return wordBag;
+}
+
+function shuffleWordBag() {
+  let words = orderedLastWords;
+  shuffleArray(words);
+  let wordHash = {};
+  words.forEach((w) => {
+    wordHash[w] = getWordPositions(w);
+  });
+  wordBag = wordHash;
   return wordBag;
 }
 
@@ -70,17 +76,6 @@ function isWordMatched(word, wordIndex) {
   }
 }
 
-function shuffleWordBag() {
-  let words = orderedLastWords;
-  shuffleArray(words);
-  let wordHash = {};
-  words.forEach((w) => {
-    wordHash[w] = getWordPositions(w);
-  });
-  wordBag = wordHash;
-  return wordBag;
-}
-
 function makeOptionsList(correctWord, lineButton, lineIndex) {
   let optionsDiv = $(
     `<ul class="dropdown-menu" id="words-${lineIndex}" aria-labelledby="line-${lineIndex}">`
@@ -104,7 +99,7 @@ function displayPoem() {
   poemDisplay.html("");
 
   initWordBag(allLines.map((l) => l[1]));
-  shuffleWordBag();
+  //shuffleWordBag();
   allLines.forEach((line, lineIndex) => {
     let dropdownDiv = $(`<div class="dropdown">`);
     let lineText = line[0];
