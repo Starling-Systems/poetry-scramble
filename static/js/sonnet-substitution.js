@@ -354,6 +354,6 @@ function updateProgressBar() {
 let poemId;
 window.onload = () => {
   const urlParams = new URLSearchParams(window.location.search);
-  const poemId = urlParams.get("id");
+  poemId = urlParams.get("id");
   loadSonnet(poemId);
 };
