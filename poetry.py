@@ -34,7 +34,7 @@ def depunctuate_word(word:str) -> tuple:
     lastpunctRE = re.compile("[" + re.escape(string.punctuation) + "]+$")
     startSpan = re.search(firstpunctRE, word)
     endSpan = re.search(lastpunctRE, word)
-
+    
     if startSpan: 
         startFirstPunct, endFirstPunct =  startSpan.span()
     else: 
@@ -42,7 +42,7 @@ def depunctuate_word(word:str) -> tuple:
     if endSpan: 
         startEndPunct, endEndPunct = endSpan.span()
     else: 
-        startEndPunct, startFirstPunct = (0, 0)
+        startEndPunct, endEndPunct = (0, 0)
     
     return (word[startFirstPunct:endFirstPunct], 
              lastpunctRE.sub("", firstpunctRE.sub("", word)),
@@ -50,6 +50,8 @@ def depunctuate_word(word:str) -> tuple:
 
 def get_last_word(l: str) -> list :
     """returns deworded string and the missing word"""
+    print("get_last_word: ")
+    print(l)
     words = l.split(" ")
     lastword = words[-1]
     lastwordclean = depunctuate_word(lastword)
