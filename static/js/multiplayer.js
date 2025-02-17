@@ -15,7 +15,7 @@ async function writeClipboardText(text) {
 
 async function invite() {
   const roomName = document.getElementById("roomName");
-  await writeClipboardText(roomName);
+  await writeClipboardText(roomName.innerText);
   console.log(`writing ${roomName} to clipboard`);
 }
 

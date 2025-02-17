@@ -139,9 +139,14 @@ function displayPoem() {
   updateProgressBar();
 }
 
-async function loadRandomPoem() {
+async function loadSonnet(id = null) {
+  let response;
   try {
-    const response = await fetch("/sonnet_deworded");
+    if (id) {
+      response = await fetch(`/get_sonnet?id=${id}`);
+    } else {
+      response = await fetch("/sonnet_deworded");
+    }
     console.log("/sonnet_deworded response:");
     console.log(response);
     if (!response.ok) {
@@ -335,7 +340,7 @@ function shareSuccess(currentPoem) {
     `I just completed "${currentPoem.title}"`,
     `by ${currentPoem.author}`,
     `with ${movesLeft} moves to spare!`,
-    `http://poetryscramble.xyz/`,
+    `http://poetryscramble.xyz/sonnet-substitution?id=${poemId}`,
   ];
   poemDisplay.html("");
   let successDiv = $(`<div>`).attr("id", "success").addClass("col");
@@ -351,4 +356,9 @@ function updateProgressBar() {
   progressBar.textContent = `Lines Completed: ${numLinesCompleted}/${total} | Wrong Guesses Left: ${movesLeft}`;
 }
 
-window.onload = loadRandomPoem;
+let poemId;
+window.onload = () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const poemId = urlParams.get("id");
+  loadSonnet(poemId);
+};
