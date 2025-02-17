@@ -57,7 +57,6 @@ def get_sonnet():
     sonnet_num = request.args.get('id', default = 0, type = int)
     try:
         sonnetJSON = poetry.get_sonnet_json(sonnet_num)
-        print(sonnetJSON)
         if not sonnetJSON['lines']:
             return jsonify({"error": "sonnet number " + sonnet_num + " not found."}), 500
         else:
@@ -94,9 +93,6 @@ def get_random_poem():
         if not poems:
             return jsonify({"error": "No poems found for the selected author."}), 500
         
-        print("Number of poems returned:")
-        print(len(poems))
-
         poems = [p for p in poems if int(p["linecount"]) <= 15]
 
         if poems == []:

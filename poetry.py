@@ -50,8 +50,6 @@ def depunctuate_word(word:str) -> tuple:
 
 def get_last_word(l: str) -> list :
     """returns deworded string and the missing word"""
-    print("get_last_word: ")
-    print(l)
     words = l.split(" ")
     lastword = words[-1]
     lastwordclean = depunctuate_word(lastword)
