@@ -1,11 +1,34 @@
 from flask import Flask, jsonify, request, send_from_directory
+from flask_migrate import Migrate
+from dotenv import load_dotenv
+
+import poetry
+from models import db, Sonnet
+
 import os
 import json
 import random
 import requests
-import poetry
+
+# Load environment variables from .env file
+load_dotenv()
 
 app = Flask(__name__, static_folder='static')
+
+# PostgreSQL Configuration
+database_url = os.getenv("DATABASE_URL")
+print("database_url = ")
+print(database_url)
+if database_url and database_url.startswith("postgres://"):
+    database_url = database_url.replace("postgres://", "postgresql://", 1)
+else:
+    database_url = "postgresql://postgres@localhost:5432/pauljean"
+
+app.config["SQLALCHEMY_DATABASE_URI"] = database_url
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+db.init_app(app)
+migrate = Migrate(app, db)
 
 @app.route('/')
 def home():
