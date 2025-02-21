@@ -1,7 +1,28 @@
+from flask_sqlalchemy import SQLAlchemy
+from flask import Flask
 import requests
 import string
 import random
 import re
+from models import Sonnet
+
+app = Flask(__name__)
+db = SQLAlchemy(app)
+
+def load_sonnets_into_db():
+    sonnets_response = requests.get("https://ajpj.fact50.net/PoetryScramble/ShakespeareSonnets.json")
+    sonnets_response.raise_for_status()
+    sonnets = sonnets_response.json()
+    for sonnet in sonnets:
+        s = Sonnet(
+            title = sonnet['title'],
+            author = sonnet['author'],
+            lines = sonnet['lines'],
+        )
+        db.session.add(s)
+        db.session.commit()
+        
+
 
 def get_random_sonnet_json():
     """returns a random sonnet in json format"""
