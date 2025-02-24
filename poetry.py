@@ -7,22 +7,6 @@ import re
 
 app = Flask(__name__)
 
-def load_sonnets_into_db():
-    sonnets_response = requests.get("https://ajpj.fact50.net/PoetryScramble/ShakespeareSonnets.json")
-    sonnets_response.raise_for_status()
-    sonnets = sonnets_response.json()
-    for sonnet in sonnets:
-        s = Sonnet(
-            title = sonnet['title'],
-            author = sonnet['author'],
-            lines = sonnet['lines'],
-        )
-        db.session.add(s)
-        db.session.commit()
-    return sonnets
-        
-
-
 def get_random_sonnet_json():
     """returns a random sonnet in json format"""
     sonnets_response = requests.get("https://ajpj.fact50.net/PoetryScramble/ShakespeareSonnets.json")
@@ -45,10 +29,11 @@ def depunctuate_word(word:str) -> tuple:
         startFirstPunct, endFirstPunct =  startSpan.span()
     else: 
         startFirstPunct, endFirstPunct = (0, 0)
+
     if endSpan: 
         startEndPunct, endEndPunct = endSpan.span()
     else: 
-        startEndPunct, startFirstPunct = (0, 0)
+        startEndPunct, endEndPunct = (0, 0)
     
     return (word[startFirstPunct:endFirstPunct], 
              lastpunctRE.sub("", firstpunctRE.sub("", word)),

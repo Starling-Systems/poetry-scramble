@@ -3,6 +3,8 @@ from flask_migrate import Migrate
 from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
 
+import poetry
+
 import os
 import json
 import random
@@ -98,20 +100,32 @@ def load_db():
 @app.route('/random_sonnet', methods=['GET'])
 def get_random_sonnet():
     try:
-        sonnets = poetry.get_random_sonnet_json()
-        if not sonnets:
+        sonnet = Sonnet.query.order_by(db.func.random()).first()  # PostgreSQL-specific
+        if not sonnet:
             return jsonify({"error": "No sonnets found."}), 500
         else:
-            return sonnets, 200
+            return sonnet, 200
     except requests.exceptions.RequestException as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route('/sonnet/<int:sonnet_id>', methods=['GET'])
+def get_sonnet(sonnet_id):
+    sonnet = Sonnet.query.get(sonnet_id)  # Equivalent to "SELECT * FROM sonnets WHERE id = sonnet_id"
+
+    if sonnet is None:
+        return {"error": "Sonnet not found"}, 404
+
+    return jsonify(sonnet.to_dict())
 
 @app.route("/sonnet_deworded", methods = ["GET"])
 def get_deworded_sonnet():
-    sonnetJSON = poetry.get_random_sonnet_json()
-    sonnetJSON["lines"] = [poetry.get_last_word(line) for line in sonnetJSON["lines"]]
-    return jsonify(sonnetJSON)
+    try:
+        sonnetObj = Sonnet.query.order_by(db.func.random()).first()  # PostgreSQL-specific
+        sonnet = sonnetObj.to_dict()
+        sonnet["lines"] = [poetry.get_last_word(line) for line in sonnet["lines"]]
+        return jsonify(sonnet)
+    except requests.exceptions.RequestException as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/random', methods=['GET'])
 def get_random_poem():
