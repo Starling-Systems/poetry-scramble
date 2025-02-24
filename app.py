@@ -3,8 +3,6 @@ from flask_migrate import Migrate
 from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
 
-import poetry
-
 import os
 import json
 import random
@@ -45,6 +43,20 @@ class Sonnet(db.Model):
             "created_at": self.created_at.strftime("%Y-%m-%d %H:%M:%S")
         }
 
+def load_sonnets_into_db():
+    sonnets_response = requests.get("https://ajpj.fact50.net/PoetryScramble/ShakespeareSonnets.json")
+    sonnets_response.raise_for_status()
+    sonnets = sonnets_response.json()
+    for sonnet in sonnets:
+        s = Sonnet(
+            title = sonnet['title'],
+            author = sonnet['author'],
+            lines = sonnet['lines'],
+        )
+        db.session.add(s)
+        db.session.commit()
+    return sonnets
+
 @app.route('/')
 def home():
     return send_from_directory(app.static_folder, 'index.html')
@@ -75,7 +87,7 @@ def get_poem(poem_id):
 @app.route('/load_db', methods=['GET'])
 def load_db():
     try:
-        sonnets = poetry.load_sonnets_into_db()
+        sonnets = load_sonnets_into_db()
     except requests.exceptions.RequestException as e:
         return jsonify({"error": str(e)}), 500
     if not sonnets:
