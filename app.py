@@ -1,14 +1,15 @@
 from flask import Flask, jsonify, request, send_from_directory
 from flask_migrate import Migrate
 from dotenv import load_dotenv
+from flask_sqlalchemy import SQLAlchemy
 
 import poetry
-from models import db, Sonnet
 
 import os
 import json
 import random
 import requests
+from datetime import datetime
 
 # Load environment variables from .env file
 load_dotenv()
@@ -17,18 +18,32 @@ app = Flask(__name__, static_folder='static')
 
 # PostgreSQL Configuration
 database_url = os.getenv("DATABASE_URL")
-
+app.config["SQLALCHEMY_DATABASE_URI"] = database_url
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 print("database_url = ")
 print(database_url)
 
-if database_url.startswith("postgres://"):
-    database_url = database_url.replace("postgres://", "postgresql://", 1)
-
-app.config["SQLALCHEMY_DATABASE_URI"] = database_url
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
+db = SQLAlchemy()
 db.init_app(app)
 migrate = Migrate(app, db)
+
+class Sonnet(db.Model):
+    __tablename__ = 'sonnets'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255), nullable=False)
+    author = db.Column(db.String(255), nullable=False)
+    lines = db.Column(db.ARRAY(db.String), nullable=False)  # Use JSON for dbite/MySQL
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "title": self.title,
+            "author": self.author,
+            "lines": self.lines,
+            "created_at": self.created_at.strftime("%Y-%m-%d %H:%M:%S")
+        }
 
 @app.route('/')
 def home():
@@ -56,6 +71,17 @@ def get_poem(poem_id):
         }), 200
     else:
         return jsonify({"error": "Poem not found"}), 404
+
+@app.route('/load_db', methods=['GET'])
+def load_db():
+    try:
+        sonnets = poetry.load_sonnets_into_db()
+    except requests.exceptions.RequestException as e:
+        return jsonify({"error": str(e)}), 500
+    if not sonnets:
+        return jsonify({"error": "No sonnets found."}), 500
+    else:
+        return sonnets, 200
 
 @app.route('/random_sonnet', methods=['GET'])
 def get_random_sonnet():

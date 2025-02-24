@@ -1,13 +1,11 @@
-from flask_sqlalchemy import SQLAlchemy
 from flask import Flask
 import requests
 import string
 import random
 import re
-from models import Sonnet
+# from models import Sonnet
 
 app = Flask(__name__)
-db = SQLAlchemy(app)
 
 def load_sonnets_into_db():
     sonnets_response = requests.get("https://ajpj.fact50.net/PoetryScramble/ShakespeareSonnets.json")
@@ -21,6 +19,7 @@ def load_sonnets_into_db():
         )
         db.session.add(s)
         db.session.commit()
+    return sonnets
         
 
 
