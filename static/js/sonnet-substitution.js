@@ -35,6 +35,7 @@ function getWordBagWords() {
 }
 
 function markWordMatched(word, lineIndex) {
+  debugger;
   let positions = wordBag[word];
   // if this is the correct word choice at position index ...
   if (Array.isArray(positions) && positions.includes(lineIndex)) {
@@ -60,6 +61,7 @@ function hasRemainingMatches(word) {
 }
 
 function isWordMatched(word, wordIndex) {
+  debugger;
   // if word appears on this line:
   if (getWordPositions(word).indexOf(wordIndex) >= 0) {
     // then check if this line has been matched yet:
@@ -70,8 +72,12 @@ function isWordMatched(word, wordIndex) {
   }
 }
 
+function deepArrayCopy(array) {
+  return JSON.parse(JSON.stringify(array));
+}
+
 function shuffleWordBag() {
-  let words = orderedLastWords;
+  let words = deepArrayCopy(orderedLastWords);
   shuffleArray(words);
   let wordHash = {};
   words.forEach((w) => {
@@ -85,8 +91,11 @@ function makeOptionsList(correctWord, lineButton, lineIndex) {
   let optionsDiv = $(
     `<ul class="dropdown-menu" id="words-${lineIndex}" aria-labelledby="line-${lineIndex}">`
   );
-  orderedLastWords.forEach((word, wordIndex) => {
-    let classStr = isWordMatched(word, wordIndex) ? "disabled" : "";
+  let shuffledWords = getWordBagWords();
+  shuffledWords.forEach((word, shuffledWordIndex) => {
+    debugger;
+    let unshuffledWordIndex = getWordPositions(word);
+    let classStr = isWordMatched(word, unshuffledWordIndex) ? "disabled" : "";
     const wordButton = $(
       `<li><a class="dropdown-item ${classStr}">${word}</a></li>`
     );
@@ -102,7 +111,6 @@ function makeOptionsList(correctWord, lineButton, lineIndex) {
 function displayPoem() {
   const poemDisplay = $("#poemDisplay");
   poemDisplay.html("");
-  shuffleWordBag();
   allLines.forEach((line, lineIndex) => {
     let dropdownDiv = $(`<div class="dropdown">`);
     let lineText = line[0];
@@ -152,6 +160,7 @@ async function loadRandomPoem() {
     numLinesCompleted = 0;
     movesLeft = 6;
     initWordBag(orderedLastWords);
+    shuffleWordBag();
     displayPoem();
     updateProgressBar();
     updatePoemDetails(currentPoem);
