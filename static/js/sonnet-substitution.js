@@ -1,3 +1,15 @@
+let allLines = [];
+let movesLeft = 6;
+let currentPoem = {};
+let numLinesCompleted = 0;
+let wordsUsed = [];
+let wordBag = {};
+let orderedLastWords = [];
+let shuffledLastWords = [];
+let shuffledIndices = [];
+let orderedIndexToShuffledIndex = {};
+let shuffledIndexToOrderedIndex = {};
+
 function shuffleArray(array) {
   for (let i = array.length - 1; i >= 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -9,14 +21,6 @@ function shuffleArray(array) {
 function restoreSentence(sentence, word) {
   return sentence.replace("___", word);
 }
-
-let allLines = [];
-let movesLeft = 6;
-let currentPoem = {};
-let numLinesCompleted = 0;
-let wordsUsed = [];
-let wordBag = {};
-let orderedLastWords = [];
 
 function initWordBag(words) {
   words.forEach((w, i) => {
@@ -34,15 +38,18 @@ function getWordBagWords() {
   return Object.keys(wordBag);
 }
 
-function markWordMatched(word, lineIndex) {
+function isWordSelectionCorrect(word, shuffledIndex) {
+  let orderedIndex = shuffledIndexToOrderedIndex[shuffledIndex];
+  return orderedLastWords[orderedIndex] == word;
+}
+
+function markWordMatched(word, shuffledIndex) {
   debugger;
-  let positions = wordBag[word];
-  // if this is the correct word choice at position index ...
-  if (Array.isArray(positions) && positions.includes(lineIndex)) {
-    // then remove this index from the remaining choices for this word:
-    positions = positions.filter((i) => i != lineIndex);
-  }
-  wordBag[word] = positions;
+  // get the current remaining positions for this word:
+  let remainingPositions = getRemainingWordPositions(word);
+  let orderedIndex = shuffledIndexToOrderedIndex[shuffledIndex];
+  remainingPositions = remainingPositions.filter((i) => i != orderedIndex);
+  wordBag[word] = remainingPositions;
 }
 
 function getWordPositions(word) {
@@ -55,18 +62,32 @@ function getWordPositions(word) {
   return wordPositions;
 }
 
-function hasRemainingMatches(word) {
-  let remainingWordPositions = wordBag[word];
-  return remainingWordPositions.length > 0;
+function getRemainingWordPositions(word) {
+  return wordBag[word];
 }
 
-function isWordMatched(word, wordIndex) {
+function getShuffledWordPositions(word) {
+  let shuffledWordPositions = [];
+  shuffledLastWords.forEach((w, i) => {
+    if (w == word) {
+      shuffledWordPositions.push(i);
+    }
+  });
+  return shuffledWordPositions;
+}
+
+function hasRemainingMatches(word) {
+  return getRemainingWordPositions(word).length > 0;
+}
+
+function isWordMatched(word, shuffledIndex) {
   debugger;
+  let orderedIndex = shuffledIndexToOrderedIndex[shuffledIndex];
   // if word appears on this line:
-  if (getWordPositions(word).indexOf(wordIndex) >= 0) {
+  if (getWordPositions(word).indexOf(orderedIndex) >= 0) {
     // then check if this line has been matched yet:
-    let remainingPositions = wordBag[word];
-    return !remainingPositions.includes(wordIndex);
+    let remainingPositions = getRemainingWordPositions(word);
+    return !remainingPositions.includes(orderedIndex);
   } else {
     return false;
   }
@@ -76,32 +97,97 @@ function deepArrayCopy(array) {
   return JSON.parse(JSON.stringify(array));
 }
 
-function shuffleWordBag() {
+function createHash(keys, values) {
+  return keys.reduce((hash, key, index) => {
+    hash[key] = values[index];
+    return hash;
+  }, {});
+}
+
+function createShuffledWords(orderedLastWords, orderedIndexToShuffledIndex) {
+  let shuffledWords = new Array(orderedLastWords.length);
+  for (let orderedIndex in orderedIndexToShuffledIndex) {
+    let shuffledIndex = orderedIndexToShuffledIndex[orderedIndex];
+    shuffledWords[shuffledIndex] = orderedLastWords[orderedIndex];
+  }
+  return shuffledWords;
+}
+
+function shuffleWords() {
   let words = deepArrayCopy(orderedLastWords);
-  shuffleArray(words);
+  let indices = Array.from(words.keys());
+  // array of shuffled indices:
+  shuffledIndices = shuffleArray(deepArrayCopy(indices));
+  // mapping from original index to shuffled index:
+  orderedIndexToShuffledIndex = createHash(indices, shuffledIndices);
+  // mapping from shuffled index to original index:
+  shuffledIndexToOrderedIndex = createHash(shuffledIndices, indices);
+
   let wordHash = {};
   words.forEach((w) => {
     wordHash[w] = getWordPositions(w);
   });
   wordBag = wordHash;
+
+  shuffledLastWords = createShuffledWords(
+    orderedLastWords,
+    orderedIndexToShuffledIndex
+  );
+
   return wordBag;
 }
 
+/*
+["line 0 ... love", "line 1 ... it", "line 2 ... you", 
+"line 3 ... it", "line 4  ... you"]
+
+orderedLastWords = 
+[love, it, you, it, you]
+
+wordBag = {
+  "love": [0],
+  "it": [1, 3],
+  "you": [2, 4]
+}
+
+(shuffle)
+
+shuffledLastWords = 
+[it, you, it, love, you]
+
+(match "it" on line index = 2)
+
+wordBag =
+{
+  "love": [0],
+  "it": [1],
+  "you": [2, 4]
+}
+
+want to display "it" at index 2 as gray:
+[it, you, it (*), love, you]
+
+lineIndex = 0: [it, you, it (gray), love, you]
+lineIndex = 1: [it, you, it (gray), love, you]
+.... 
+
+*/
 function makeOptionsList(correctWord, lineButton, lineIndex) {
   let optionsDiv = $(
     `<ul class="dropdown-menu" id="words-${lineIndex}" aria-labelledby="line-${lineIndex}">`
   );
-  let shuffledWords = getWordBagWords();
-  shuffledWords.forEach((word, shuffledWordIndex) => {
-    debugger;
-    let unshuffledWordIndex = getWordPositions(word);
-    let classStr = isWordMatched(word, unshuffledWordIndex) ? "disabled" : "";
+  shuffledLastWords.forEach((word, shuffledIndex) => {
+    /* 
+    [it, you, it (*), love, you]
+    */
+
+    let classStr = isWordMatched(word, shuffledIndex) ? "disabled" : "";
     const wordButton = $(
       `<li><a class="dropdown-item ${classStr}">${word}</a></li>`
     );
     wordButton.click((e) => {
       e.preventDefault();
-      handleWordSelect(word, correctWord, lineButton, lineIndex);
+      handleWordSelect(word, shuffledIndex, correctWord, lineButton, lineIndex);
     });
     optionsDiv.append(wordButton);
   });
@@ -160,7 +246,7 @@ async function loadRandomPoem() {
     numLinesCompleted = 0;
     movesLeft = 6;
     initWordBag(orderedLastWords);
-    shuffleWordBag();
+    shuffleWords();
     displayPoem();
     updateProgressBar();
     updatePoemDetails(currentPoem);
@@ -175,8 +261,14 @@ function updatePoemDetails(currentPoem) {
   poemDetails.innerHTML = `<h3>${currentPoem.title} by ${currentPoem.author}</h3>`;
 }
 
-function handleWordSelect(selectedWord, correctWord, lineButton, lineIndex) {
-  if (selectedWord !== correctWord) {
+function handleWordSelect(
+  selectedWord,
+  shuffledIndex,
+  correctWord,
+  lineButton,
+  lineIndex
+) {
+  if (!isWordSelectionCorrect(selectedWord, shuffledIndex)) {
     poemDisplay.classList.add("incorrect");
     movesLeft--;
     setTimeout(() => {
@@ -186,7 +278,7 @@ function handleWordSelect(selectedWord, correctWord, lineButton, lineIndex) {
   } else {
     const poemDisplay = document.getElementById("poemDisplay");
     const lineText = lineButton[0].innerHTML;
-    markWordMatched(correctWord, lineIndex);
+    markWordMatched(correctWord, shuffledIndex);
     poemDisplay.classList.add("correct");
     setTimeout(() => {
       poemDisplay.classList.remove("correct");
