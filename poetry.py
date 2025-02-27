@@ -1,7 +1,11 @@
+from flask import Flask
 import requests
 import string
 import random
 import re
+# from models import Sonnet
+
+app = Flask(__name__)
 
 def get_random_sonnet_json():
     """returns a random sonnet in json format"""
@@ -25,10 +29,11 @@ def depunctuate_word(word:str) -> tuple:
         startFirstPunct, endFirstPunct =  startSpan.span()
     else: 
         startFirstPunct, endFirstPunct = (0, 0)
+
     if endSpan: 
         startEndPunct, endEndPunct = endSpan.span()
     else: 
-        startEndPunct, startFirstPunct = (0, 0)
+        startEndPunct, endEndPunct = (0, 0)
     
     return (word[startFirstPunct:endFirstPunct], 
              lastpunctRE.sub("", firstpunctRE.sub("", word)),
